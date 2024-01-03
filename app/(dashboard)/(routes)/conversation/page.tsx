@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import axios from "axios";
-import { MessageSquare } from "lucide-react";
+import { Linkedin, MessageSquare, Twitter } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -22,29 +22,73 @@ import { Empty } from "@/components/ui/empty";
 import { useProModal } from "@/hooks/use-pro-modal";
 
 import { formSchema } from "./constants";
+import { Youtube } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+const CommunityPostComponent = () => {
+  return (
+    <span className="flex flex-row align-middle ">
+      <Youtube size={"20px"} className="mr-2" /> Community Post
+    </span>
+  );
+};
+
+const TwitterThreadComponent = () => {
+  return (
+    <span className="flex flex-row align-middle">
+      <Twitter size={"20px"} className="mr-2" /> Twitter Post
+    </span>
+  );
+};
+
+const LinkedinPostComponent = () => {
+  return (
+    <span className="flex flex-row align-middle">
+      <Linkedin size={"20px"} className="mr-2" /> LinkedIn Post
+    </span>
+  );
+};
 
 const ConversationPage = () => {
   const router = useRouter();
   const proModal = useProModal();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const [dropdownSelection, setDropdownSelection] = useState<React.ReactNode>(
+    <h1>Select Platform 👇</h1>
+  );
+  const [dropdownValue, setDropdownValue] = useState<string>("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      prompt: ""
-    }
+      prompt: "",
+    },
   });
 
   const isLoading = form.formState.isSubmitting;
-  
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const userMessage: ChatCompletionRequestMessage = { role: "user", content: values.prompt };
-      const newMessages = [...messages, userMessage];
-      
-      const response = await axios.post('/api/conversation', { messages: newMessages });
+      const userMessage: ChatCompletionRequestMessage = {
+        role: "user",
+        content: values.prompt,
+      };
+      // console.log("userMessage: ", userMessage);
+      // const newMessages = [...messages, userMessage];
+
+      const response = await axios.post("/api/conversation", {
+        ytUrl: values.prompt,
+        postType: dropdownValue,
+      });
       setMessages((current) => [...current, userMessage, response.data]);
-      
+
       form.reset();
     } catch (error: any) {
       if (error?.response?.status === 403) {
@@ -55,13 +99,25 @@ const ConversationPage = () => {
     } finally {
       router.refresh();
     }
+  };
+
+  function dropdownStyleSelector() {
+    if (dropdownValue == "youtube") {
+      return "bg-red-100";
+    } else if (dropdownValue == "twitter") {
+      return "bg-blue-100";
+    } else if (dropdownValue == "linkedin") {
+      return "bg-blue-200";
+    } else {
+      return "";
+    }
   }
 
-  return ( 
+  return (
     <div>
       <Heading
-        title="Conversation"
-        description="Our most advanced conversation model."
+        title="Social Posts Generator"
+        description="Generate Social Media Posts for All Your Socials in less than 10 seconds!"
         icon={MessageSquare}
         iconColor="text-violet-500"
         bgColor="bg-violet-500/10"
@@ -69,8 +125,8 @@ const ConversationPage = () => {
       <div className="px-4 lg:px-8">
         <div>
           <Form {...form}>
-            <form 
-              onSubmit={form.handleSubmit(onSubmit)} 
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
               className="
                 rounded-lg 
                 border 
@@ -82,24 +138,77 @@ const ConversationPage = () => {
                 grid
                 grid-cols-12
                 gap-2
+                bg-white
               "
             >
               <FormField
                 name="prompt"
                 render={({ field }) => (
-                  <FormItem className="col-span-12 lg:col-span-10">
-                    <FormControl className="m-0 p-0">
+                  <FormItem className="col-span-12 lg:col-span-10 flex flex-row align-middle">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          className={cn(
+                            "text-left w-56 border-2",
+                            dropdownStyleSelector()
+                          )}
+                          variant="outline"
+                        >
+                          {dropdownSelection}
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-56">
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem
+                            className="bg-red-100 cursor-pointer"
+                            onClick={() => {
+                              setDropdownValue("youtube");
+                              setDropdownSelection(<CommunityPostComponent />);
+                            }}
+                          >
+                            <CommunityPostComponent />
+                            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="bg-blue-100 cursor-pointer"
+                            onClick={() => {
+                              setDropdownValue("twitter");
+                              setDropdownSelection(<TwitterThreadComponent />);
+                            }}
+                          >
+                            <TwitterThreadComponent />
+                            <DropdownMenuShortcut>⌘T</DropdownMenuShortcut>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="bg-blue-200 cursor-pointer"
+                            onClick={() => {
+                              setDropdownValue("linkedin");
+                              setDropdownSelection(<LinkedinPostComponent />);
+                            }}
+                          >
+                            <LinkedinPostComponent />
+                            <DropdownMenuShortcut>⌘L</DropdownMenuShortcut>
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    <FormControl className="-mt-4 p-0">
                       <Input
-                        className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
-                        disabled={isLoading} 
-                        placeholder="How do I calculate the radius of a circle?" 
+                        className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent ml-4 -pt-10"
+                        disabled={isLoading}
+                        placeholder="Enter a valid Youtube Video URL"
                         {...field}
                       />
                     </FormControl>
                   </FormItem>
                 )}
               />
-              <Button className="col-span-12 lg:col-span-2 w-full" type="submit" disabled={isLoading} size="icon">
+              <Button
+                className="col-span-12 lg:col-span-2 w-full bg-black"
+                type="submit"
+                disabled={isLoading}
+                size="icon"
+              >
                 Generate
               </Button>
             </form>
@@ -116,25 +225,24 @@ const ConversationPage = () => {
           )}
           <div className="flex flex-col-reverse gap-y-4">
             {messages.map((message) => (
-              <div 
-                key={message.content} 
+              <div
+                key={message.content}
                 className={cn(
                   "p-8 w-full flex items-start gap-x-8 rounded-lg",
-                  message.role === "user" ? "bg-white border border-black/10" : "bg-muted",
+                  message.role === "user"
+                    ? "bg-white border border-black/10"
+                    : "bg-muted"
                 )}
               >
                 {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                <p className="text-sm">
-                  {message.content}
-                </p>
+                <p className="text-sm">{message.content}</p>
               </div>
             ))}
           </div>
         </div>
       </div>
     </div>
-   );
-}
- 
-export default ConversationPage;
+  );
+};
 
+export default ConversationPage;
