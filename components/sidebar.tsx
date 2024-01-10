@@ -12,6 +12,7 @@ import {
   Upload,
   UploadIcon,
   Plus,
+  FolderClosed,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -36,8 +37,8 @@ const routes = [
     href: "/youtube-seo",
   },
   {
-    label: "Your Documents",
-    icon: File,
+    label: "Youtube Script",
+    icon: FolderClosed,
     href: "/documents",
   },
   // {
@@ -84,10 +85,11 @@ export const Sidebar = ({
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#fffdf9] border-r-[0.2px] border-gray-200">
       <div className="px-3 py-2 flex-1">
         <Link href="/dashboard" className="flex items-center pl-3 mb-10">
-          <div className="relative h-8 w-8 mr-4">
-            <Image fill alt="Logo" src="/logo.png" />
+          <div className="relative mr-2">
+            {/* <Image fill alt="Logo" src="/logo.png" /> */}
+            <h1 className={cn("text-4xl font-bold text-red-500")}>@</h1>
           </div>
-          <h1 className={cn("text-4xl font-bold")}>Draaft</h1>
+          <h1 className={cn("text-4xl font-bold")}>draaft</h1>
         </Link>
         <div className="px-3 pb-6">
           <Button

@@ -35,6 +35,12 @@ export const FreeCounter = ({
         <CardContent className="py-6">
           <div className="text-center text-sm text-black mb-4 space-y-2">
             <p>Want an Editor and Thumbnail Designer?</p>
+            <p>
+              <span className="font-bold text-2xl">$899/mo</span>
+              <span className="font-bold text-md ml-1 text-emerald-400">
+                (15% Off)
+              </span>
+            </p>
             {/* <Progress
               className="h-3"
               value={(apiLimitCount / MAX_FREE_COUNTS) * 100}

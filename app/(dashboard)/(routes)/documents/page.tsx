@@ -66,12 +66,28 @@ function DocumentsPage() {
       router.refresh();
     }
 
-    setGeneratedContent({
-      type: "paragraph",
-      content: [
-        "Hey everyone! Welcome back to my channel. Today, I am going to show you how to bake a delicious homemade cake. I know baking can be intimidating, but with my easy step-by-step guide, you'll be a pro in no time. Let's get started!",
-      ],
-    });
+    // setGeneratedContent(
+    //   JSON.stringify([
+    //     {
+    //       id: "268d5bb5-6a20-446e-8870-31151eb390c7",
+    //       type: "paragraph",
+    //       props: {
+    //         textColor: "default",
+    //         backgroundColor: "default",
+    //         textAlignment: "left",
+    //       },
+    //       content: [
+    //         {
+    //           type: "text",
+    //           text: "text",
+    //           styles: {},
+    //         },
+    //       ],
+    //       children: [],
+    //     },
+    //   ])
+    // );
+    // router.refresh();
   };
 
   const createAndDownloadFile = (text: string) => {
@@ -143,7 +159,9 @@ function DocumentsPage() {
         <Editor
           editable
           initialContent={generatedContent}
-          onChange={() => {}}
+          onChange={(text) => {
+            console.log("TEXT: ", text);
+          }}
         />
       </div>
     </div>
