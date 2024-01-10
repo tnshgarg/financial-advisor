@@ -81,7 +81,7 @@ async function generateText() {
 
 export async function POST(req: Request) {
   try {
-    const { userId } = auth();
+    const { userId, getToken } = auth();
     const body = await req.json();
     const { ytUrl, postType } = body;
 

@@ -204,7 +204,7 @@ const ConversationPage = () => {
                 )}
               />
               <Button
-                className="col-span-12 lg:col-span-2 w-full bg-black"
+                className="col-span-12 lg:col-span-2 w-full bg-black text-md"
                 type="submit"
                 disabled={isLoading}
                 size="icon"

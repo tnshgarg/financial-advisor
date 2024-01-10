@@ -4,42 +4,41 @@ import Link from "next/link";
 import Image from "next/image";
 import { Montserrat } from "next/font/google";
 import {
-  Code,
-  ImageIcon,
   LayoutDashboard,
   MessageSquare,
-  Music,
-  Plus,
-  PlusCircle,
   Settings,
   Target,
-  VideoIcon,
+  File,
+  Upload,
+  UploadIcon,
+  Plus,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { FreeCounter } from "@/components/free-counter";
-
-const poppins = Montserrat({ weight: "600", subsets: ["latin"] });
+import { Button } from "./ui/button";
 
 const routes = [
   {
-    label: "Create",
+    label: "Dashboard",
     icon: LayoutDashboard,
     href: "/dashboard",
-    color: "text-sky-500",
   },
   {
     label: "Social Posts Generator",
     icon: MessageSquare,
-    color: "text-violet-500",
     href: "/conversation",
   },
   {
     label: "Youtube SEO",
     icon: Target,
-    color: "text-pink-500",
     href: "/youtube-seo",
+  },
+  {
+    label: "Your Documents",
+    icon: File,
+    href: "/documents",
   },
   // {
   //   label: "Image Generation",
@@ -82,16 +81,23 @@ export const Sidebar = ({
   const pathname = usePathname();
 
   return (
-    <div className="space-y-4 py-4 flex flex-col h-full bg-[#000807] text-white">
+    <div className="space-y-4 py-4 flex flex-col h-full bg-[#fffdf9] border-r-[0.2px] border-gray-200">
       <div className="px-3 py-2 flex-1">
-        <Link href="/dashboard" className="flex items-center pl-3 mb-14">
+        <Link href="/dashboard" className="flex items-center pl-3 mb-10">
           <div className="relative h-8 w-8 mr-4">
             <Image fill alt="Logo" src="/logo.png" />
           </div>
-          <h1 className={cn("text-2xl font-bold", poppins.className)}>
-            Draaft
-          </h1>
+          <h1 className={cn("text-4xl font-bold")}>Draaft</h1>
         </Link>
+        <div className="px-3 pb-6">
+          <Button
+            className="bg-red-500 w-full text-md font-bold rounded-md"
+            color="red"
+          >
+            <Plus className="mr-2 font-bold" />
+            Upload Video
+          </Button>
+        </div>
 
         <div className="space-y-1">
           {routes.map((route) => (
@@ -99,15 +105,24 @@ export const Sidebar = ({
               key={route.href}
               href={route.href}
               className={cn(
-                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
-                pathname === route.href
-                  ? "text-white bg-white/10"
-                  : "text-zinc-400"
+                "text-md group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-black hover:underline hover:bg-red-50 rounded-lg transition",
+                pathname === route.href ? "bg-red-50" : "text-black"
               )}
             >
               <div className="flex items-center flex-1">
-                <route.icon className={cn("h-5 w-5 mr-3", route.color)} />
-                {route.label}
+                <route.icon
+                  className={cn(
+                    "h-5 w-5 mr-3",
+                    pathname == route.href ? "text-red-400 font-bold" : ""
+                  )}
+                />
+                <span
+                  className={cn(
+                    pathname == route.href ? "text-black font-bold" : ""
+                  )}
+                >
+                  {route.label}
+                </span>
               </div>
             </Link>
           ))}

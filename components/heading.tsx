@@ -1,4 +1,5 @@
 import { Icon } from "lucide-react";
+import "../app/custom-font.css";
 
 import { cn } from "@/lib/utils";
 
@@ -25,9 +26,7 @@ export const Heading = ({
         </div>
         <div>
           <h2 className="text-3xl font-bold">{title}</h2>
-          <p className="text-sm text-muted-foreground">
-            {description}
-          </p>
+          <p className="text-md text-muted-foreground">{description}</p>
         </div>
       </div>
     </>

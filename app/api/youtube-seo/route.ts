@@ -12,6 +12,7 @@ import fs from "fs";
 import ytdl from "ytdl-core";
 import axios from "axios";
 import FormData from "form-data";
+import prismadb from "@/lib/prismadb";
 
 // import { checkSubscription } from "@/lib/subscription";
 // import { incrementApiLimit, checkApiLimit } from "@/lib/api-limit";

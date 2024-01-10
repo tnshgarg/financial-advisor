@@ -2,13 +2,7 @@
 
 import * as z from "zod";
 import axios from "axios";
-import {
-  Download,
-  Lightbulb,
-  Linkedin,
-  MessageSquare,
-  Twitter,
-} from "lucide-react";
+import { Download, Lightbulb } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -18,7 +12,6 @@ import { ChatCompletionRequestMessage } from "openai";
 import { BotAvatar } from "@/components/bot-avatar";
 import { Heading } from "@/components/heading";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
@@ -28,40 +21,7 @@ import { Empty } from "@/components/ui/empty";
 import { useProModal } from "@/hooks/use-pro-modal";
 
 import { formSchema } from "./constants";
-import { Youtube } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
-
-const CommunityPostComponent = () => {
-  return (
-    <span className="flex flex-row align-middle ">
-      <Youtube size={"20px"} className="mr-2" /> Community Post
-    </span>
-  );
-};
-
-const TwitterThreadComponent = () => {
-  return (
-    <span className="flex flex-row align-middle">
-      <Twitter size={"20px"} className="mr-2" /> Twitter Post
-    </span>
-  );
-};
-
-const LinkedinPostComponent = () => {
-  return (
-    <span className="flex flex-row align-middle">
-      <Linkedin size={"20px"} className="mr-2" /> LinkedIn Post
-    </span>
-  );
-};
 
 const CreateNew = () => {
   const router = useRouter();
@@ -115,7 +75,7 @@ const CreateNew = () => {
   };
 
   return (
-    <div className="bg-[#f0eee7]">
+    <div className="bg-[#fffdf9]">
       <Heading
         title="Work on Your Next Idea!"
         description="Create Your Next Video Script in less than 30 seconds and Make Changes Right Here!"
@@ -146,7 +106,7 @@ const CreateNew = () => {
                 )}
               />
               <Button
-                className="col-span-12 lg:col-span-2 w-full bg-black"
+                className="col-span-12 lg:col-span-2 w-full bg-black text-md"
                 type="submit"
                 disabled={isLoading}
                 size="icon"
