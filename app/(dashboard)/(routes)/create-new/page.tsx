@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import axios from "axios";
-import { Download, Lightbulb } from "lucide-react";
+import { Download, Lightbulb, StickyNote } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -118,7 +118,7 @@ const CreateNew = () => {
         </div>
         <div className="space-y-4 mt-4">
           {isLoading && (
-            <div className="p-8 rounded-lg w-full flex items-center justify-center bg-muted">
+            <div className="p-8 rounded-lg w-full flex items-center justify-center bg-[#fffdf9]">
               <Loader />
             </div>
           )}
@@ -146,17 +146,30 @@ const CreateNew = () => {
                   {message.content}
                 </p>
                 {message.role !== "user" && (
-                  <div
-                    onClick={() =>
-                      createAndDownloadFile(
-                        message.content ? message.content : ""
-                      )
-                    }
-                    className={cn(
-                      "p-2 w-fit rounded-md bg-gray-200 cursor-pointer"
-                    )}
-                  >
-                    <Download className={cn("w-3 h-3")} />
+                  <div>
+                    <div
+                      onClick={() =>
+                        createAndDownloadFile(
+                          message.content ? message.content : ""
+                        )
+                      }
+                      className={cn(
+                        "p-2 w-fit rounded-md bg-gray-200 cursor-pointer"
+                      )}
+                    >
+                      <Download className={cn("w-3 h-3")} />
+                    </div>
+                    <Button
+                      onClick={() =>
+                        router.push(
+                          `/create-new-youtube-script?script=${message.content}`
+                        )
+                      }
+                      className={cn("p-2 w-fit rounded-md")}
+                    >
+                      <StickyNote className={cn("w-3 h-3")} />
+                      Edit Script
+                    </Button>
                   </div>
                 )}
               </div>

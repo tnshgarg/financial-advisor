@@ -13,6 +13,7 @@ import {
   UploadIcon,
   Plus,
   FolderClosed,
+  StickyNote,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -37,9 +38,14 @@ const routes = [
     href: "/youtube-seo",
   },
   {
-    label: "Youtube Script",
+    label: "Your Documents",
     icon: FolderClosed,
     href: "/documents",
+  },
+  {
+    label: "Create Youtube Script",
+    icon: StickyNote,
+    href: "/create-new",
   },
   // {
   //   label: "Image Generation",

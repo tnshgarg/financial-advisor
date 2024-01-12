@@ -3,50 +3,54 @@
 import {
   ArrowRight,
   HandMetal,
-  HardDrive,
   Lightbulb,
   Linkedin,
   Twitter,
   Youtube,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-
 import { cn } from "@/lib/utils";
-
 import { BigCard } from "@/components/ui/bigCard";
 import { Button } from "@/components/ui/button";
 import Dropzone from "@/components/dropzone";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
-import { NextResponse } from "next/server";
+import { numberFormatter } from "@/lib/numberFormatter";
 
 export default function HomePage() {
   const router = useRouter();
   const [visible, setVisible] = useState<boolean>(true);
   const [file, setFile] = useState<File>();
+  const [analyticsData, setAnalyticsData] = useState<
+    | {
+        items: any[];
+        kind: string;
+        etag: string;
+        pageInfo: { totalResults: number; resultsPerPage: number };
+      }
+    | undefined
+  >(undefined);
 
-  async function getDriveData() {
-    const response = await axios.get("/api/connect-drive-account");
-    console.log("Drive Data: ", response);
-  }
-  async function storeAuthenticationData() {
+  async function getYoutubeAnalyticsData() {
     try {
-      const response = await axios.post("/api/store-auth-data");
-      console.log("Store Auth Data Response: ", storeAuthenticationData);
-      return new NextResponse("Authentication Data Stored Successfully", {
-        status: 200,
-      });
+      const response = await axios.get("/api/dashboard");
+      console.log("Analytica Data First: ", response);
+      return response?.data;
     } catch (error) {
-      return new NextResponse("Internal Error", {
-        status: 500,
-      });
+      console.error("Error fetching YouTube analytics data:", error);
+      return undefined;
     }
   }
 
   useEffect(() => {
-    // storeAuthenticationData();
-    // getDriveData();
+    const fetchData = async () => {
+      const data = await getYoutubeAnalyticsData();
+      console.log("Analytica Data: ", data);
+      setAnalyticsData(data);
+    };
+
+    fetchData();
   }, []);
 
   async function connectYoutubeAccount() {
@@ -95,11 +99,13 @@ export default function HomePage() {
 
   async function uploadVideo(videoFile: File) {
     console.log("Videofile: ", videoFile.name);
-
     try {
+      const formdata = new FormData();
+      formdata.append("file", videoFile);
       const response = await axios.post("/api/upload-video-2", {
-        videoFile: videoFile,
+        videoFile: formdata,
       });
+
       console.log("<Upload Response>: ", response);
       return response.data;
     } catch (error) {
@@ -119,6 +125,42 @@ export default function HomePage() {
           Youtube Video Script, All The Assets along with it or you can create
           assets for an existing video!
         </p>
+      </div>
+      <div className="px-4 md:px-20 lg:px-32 flex flex-row justify-between w-100 mb-8">
+        {!analyticsData ? (
+          <div>Loading...</div>
+        ) : (
+          <>
+            <BigCard
+              onClick={() => router.push("/create-new")}
+              key={"/create-new"}
+              className="p-4 border-black/5 flex items-center justify-between hover:shadow-md transition cursor-pointer w-[24%]"
+            >
+              <div className="items-center gap-x-4 align-middle w-full">
+                <div className="font-semibold text-center">{"Subscribers"}</div>
+                <div className="font-semibold text-4xl text-center">
+                  {numberFormatter(
+                    analyticsData?.items[0].statistics.subscriberCount
+                  )}
+                </div>
+              </div>
+            </BigCard>
+            <BigCard
+              onClick={() => router.push("/create-new")}
+              key={"/create-new"}
+              className="p-4 border-black/5 flex items-center justify-between hover:shadow-md transition cursor-pointer w-[24%]"
+            >
+              <div className="items-center gap-x-4 align-middle w-full">
+                <div className="font-semibold text-center">{"Views"}</div>
+                <div className="font-semibold text-4xl text-center">
+                  {numberFormatter(
+                    analyticsData?.items[0].statistics.viewCount
+                  )}
+                </div>
+              </div>
+            </BigCard>
+          </>
+        )}
       </div>
       <div className="px-4 md:px-20 lg:px-32 flex flex-row justify-between w-100">
         <BigCard

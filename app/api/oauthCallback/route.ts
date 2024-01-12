@@ -20,7 +20,11 @@ export const POST = async (req: Request, res: NextApiResponse) => {
     if (userId) {
       const { tokens } = await oauth2Client.getToken(code);
       console.log("TOKENS: ", tokens);
-      oauth2Client.setCredentials(tokens);
+      oauth2Client.setCredentials({
+        refresh_token: tokens.refresh_token,
+        access_token: tokens.access_token,
+        expiry_date: tokens.expiry_date,
+      });
       console.log("setCredentials: ", tokens);
       console.log("UserId: ", userId);
 
