@@ -1,42 +1,86 @@
-import formidable from "formidable";
-import fs from "fs";
+import { oauth2Client } from "@/lib/oauth";
+import axios from "axios";
 import { NextResponse } from "next/server";
-import path from "path";
+import { getCredentials } from "../(helpers)/getCredentials";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
-export async function POST(req: any, res: any) {
+export async function POST(req: any) {
   try {
-    const form = new formidable.IncomingForm();
+    const credentialsOrResponse = await getCredentials();
+    if ("access_token" in credentialsOrResponse) {
+      oauth2Client.setCredentials({
+        refresh_token: credentialsOrResponse?.refresh_token,
+      });
+      const { token: accessToken } = await oauth2Client.getAccessToken();
+      const { videoFile, title, description } = req.body;
 
-    // Set the upload directory
-    form.uploadDir = path.join(process.cwd(), "public/uploads");
+      const metadata = {
+        snippet: {
+          title: title || "Default Title",
+          description: description || "Default Description",
+        },
+        status: {
+          privacyStatus: "private",
+        },
+      };
 
-    form.parse(req, async (err: any, fields: any, files: any) => {
-      if (err) {
-        console.error("Error parsing form data:", err);
-        // res.status(500).json({ error: "Internal Server Error" });
-        return NextResponse.json(err);
-      }
+      const videoUploadUrl = `https://www.googleapis.com/upload/youtube/v3/videos?part=snippet%2Cstatus?key=${process.env.GOOGLE_API_KEY}`;
 
-      const { title, description, privacyStatus } = fields;
-      const { file } = files;
+      console.log("videoUploadUrl: ", videoUploadUrl);
 
-      // Handle the file (move it to the desired location, save metadata to the database, etc.)
-      const uploadPath = path.join(form.uploadDir, file.name);
-      fs.renameSync(file.path, uploadPath);
+      const response = await axios.post(videoUploadUrl, videoFile, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "video/*",
+        },
+        data: metadata,
+      });
 
-      // Here you can save the video metadata and file path to your database
+      console.log("Upload Response: ", response);
 
-      // Respond with success
-      return NextResponse.json("Video Uploaded Successfully!");
-    });
+      const videoId = response.data.id;
+      return NextResponse.json({ success: true, videoId });
+    }
+  } catch (error: any) {
+    console.error("Error handling video upload:", error.response);
+    return NextResponse.json(error.response.data.error);
+  }
+
+  try {
+    const { videoFile, title, description, accessToken } = req.body;
+
+    const metadata = {
+      snippet: {
+        title: title || "Default Title",
+        description: description || "Default Description",
+      },
+      status: {
+        privacyStatus: "private", // You can adjust privacy status as needed
+      },
+    };
+
+    const videoUploadUrl = "https://youtube.googleapis.com/youtube/v3/videos";
+    const apiKey = process.env.GOOGLE_API_KEY; // Replace with your actual API key
+
+    const formData = new FormData();
+    formData.append("video", videoFile);
+    formData.append("snippet", JSON.stringify(metadata.snippet));
+    formData.append("status", JSON.stringify(metadata.status));
+
+    // const response = await axios.post(videoUploadUrl, formData, {
+    //   headers: {
+    //     Authorization: `Bearer ${accessToken}`,
+    //     "Content-Type": "multipart/form-data",
+    //   },
+    //   params: {
+    //     part: "snippet,status",
+    //     key: apiKey,
+    //   },
+    // });
+
+    // const videoId = response.data.id;
+    // return NextResponse.json({ success: true, videoId });
   } catch (error) {
     console.error("Error handling video upload:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return NextResponse.json("Internal Server Error");
   }
 }

@@ -20,8 +20,6 @@ import { numberFormatter } from "@/lib/numberFormatter";
 
 export default function HomePage() {
   const router = useRouter();
-  const [visible, setVisible] = useState<boolean>(true);
-  const [file, setFile] = useState<File>();
   const [analyticsData, setAnalyticsData] = useState<
     | {
         items: any[];
@@ -35,7 +33,6 @@ export default function HomePage() {
   async function getYoutubeAnalyticsData() {
     try {
       const response = await axios.get("/api/dashboard");
-      console.log("Analytica Data First: ", response);
       return response?.data;
     } catch (error) {
       console.error("Error fetching YouTube analytics data:", error);
@@ -46,7 +43,6 @@ export default function HomePage() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await getYoutubeAnalyticsData();
-      console.log("Analytica Data: ", data);
       setAnalyticsData(data);
     };
 
@@ -73,30 +69,6 @@ export default function HomePage() {
     }
   }
 
-  async function connectGoogleDriveAccount() {
-    try {
-      const postResponse = await axios.post("/api/connect-drive-account");
-      console.log("postResponse: ", postResponse.data);
-
-      if (postResponse.data) {
-        const authUrl = postResponse.data;
-
-        window.location.href = authUrl;
-
-        const getResponse = await axios.get("/api/connect-drive-account");
-        console.log("<getResponse>: ", getResponse.data);
-      } else {
-        console.log("Auth URL not found in response.");
-        toast.error("Failed to initiate Google Drive connection.");
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error(
-        "Could not connect your Google Drive account, something went wrong!"
-      );
-    }
-  }
-
   async function uploadVideo(videoFile: File) {
     console.log("Videofile: ", videoFile.name);
     try {
@@ -111,6 +83,20 @@ export default function HomePage() {
     } catch (error) {
       console.log(error);
       toast.error("Video could not be uploaded, something went wrong!");
+    }
+  }
+
+  async function postToWordpress() {
+    try {
+      const response = await axios.post("/api/post-to-wordpress", {
+        title: "Demo",
+        content: "Demo",
+        status: "publish",
+      });
+      console.log("Wordpress Post Response: ", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Internal Server Error: ", error);
     }
   }
 
@@ -199,6 +185,9 @@ export default function HomePage() {
         </Button>
         <Button className="bg-black">
           <Twitter className="mr-2 h-4 w-4" /> Connect X / Twitter Account
+        </Button>
+        <Button className="bg-black" onClick={postToWordpress}>
+          <Twitter className="mr-2 h-4 w-4" /> Post to Wordpress
         </Button>
       </div>
       <div className="px-4 md:px-20 lg:px-32 py-2">

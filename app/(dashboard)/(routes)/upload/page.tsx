@@ -14,30 +14,34 @@ export default function Upload() {
     setFile(selectedFile);
   };
 
+  const uploadVideo = async (file: any, title: any, description: any) => {
+    const formData = new FormData();
+    formData.append("videoFile", file);
+    formData.append("title", title);
+    formData.append("description", description);
+
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        console.log("Video uploaded successfully. Video ID:", data.videoId);
+      } else {
+        console.error("Failed to upload video:", data.error);
+      }
+    } catch (error) {
+      console.error("Error uploading video:", error);
+    }
+  };
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("privacyStatus", privacyStatus);
-    if (file) {
-      formData.append("file", file);
-    }
-
-    try {
-      const response = await axios.post("/api/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      console.log("Upload response:", response.data);
-      // Handle success, show a success message, or redirect the user
-    } catch (error) {
-      console.error("Error uploading video:", error);
-      // Handle error, show an error message to the user
-    }
+    uploadVideo(file, title, description);
   };
 
   return (
