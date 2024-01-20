@@ -1,22 +1,15 @@
 "use client";
 
-import {
-  ArrowRight,
-  HandMetal,
-  Lightbulb,
-  Linkedin,
-  Twitter,
-  Youtube,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { BigCard } from "@/components/ui/bigCard";
-import { Button } from "@/components/ui/button";
 import Dropzone from "@/components/dropzone";
+import LinkedinPost from "@/components/social/linkedinPost";
+import TwitterPost from "@/components/social/twitterPost";
+import { BigCard } from "@/components/ui/bigCard";
+import { cn } from "@/lib/utils";
 import axios from "axios";
-import toast from "react-hot-toast";
+import { ArrowRight, HandMetal, Lightbulb } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { numberFormatter } from "@/lib/numberFormatter";
+import toast from "react-hot-toast";
 
 export default function HomePage() {
   const router = useRouter();
@@ -29,25 +22,34 @@ export default function HomePage() {
       }
     | undefined
   >(undefined);
-
-  async function getYoutubeAnalyticsData() {
-    try {
-      const response = await axios.get("/api/dashboard");
-      return response?.data;
-    } catch (error) {
-      console.error("Error fetching YouTube analytics data:", error);
-      return undefined;
-    }
-  }
+  const [isHidden, setIsHidden] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await getYoutubeAnalyticsData();
-      setAnalyticsData(data);
+    const handleScroll = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      setIsHidden(scrollY > 0); // Hide if scrolled
     };
 
-    fetchData();
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
+
+  // async function getYoutubeAnalyticsData() {
+  //   try {
+  //     const response = await axios.get("/api/dashboard");
+  //     console.log("DATA: ", response.data);
+  //     setAnalyticsData(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching YouTube analytics data:", error);
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   getYoutubeAnalyticsData();
+  // }, []);
 
   async function connectYoutubeAccount() {
     try {
@@ -101,7 +103,7 @@ export default function HomePage() {
   }
 
   return (
-    <div>
+    <div className="px-4 md:px-20 lg:px-12">
       <div className="mb-8 space-y-4">
         <h2 className="text-2xl md:text-5xl font-bold text-center">
           Let's Create Something Views-Worthy!
@@ -112,47 +114,71 @@ export default function HomePage() {
           assets for an existing video!
         </p>
       </div>
-      <div className="px-4 md:px-20 lg:px-32 flex flex-row justify-between w-100 mb-8">
+      {/* <div className="flex flex-row justify-between w-100 mb-7">
         {!analyticsData ? (
           <div>Loading...</div>
         ) : (
           <>
             <BigCard
-              onClick={() => router.push("/create-new")}
-              key={"/create-new"}
-              className="p-4 border-black/5 flex items-center justify-between hover:shadow-md transition cursor-pointer w-[24%]"
+              key={"subscriber count"}
+              className="p-4 border-black/5 bg-red-50 flex items-center justify-between hover:shadow-md transition cursor-pointer w-[24%]"
             >
               <div className="items-center gap-x-4 align-middle w-full">
                 <div className="font-semibold text-center">{"Subscribers"}</div>
-                <div className="font-semibold text-4xl text-center">
-                  {numberFormatter(
+                <div className="font-bold text-4xl text-center">
+                  {formatLargeNumber(
                     analyticsData?.items[0].statistics.subscriberCount
                   )}
                 </div>
               </div>
             </BigCard>
             <BigCard
-              onClick={() => router.push("/create-new")}
-              key={"/create-new"}
-              className="p-4 border-black/5 flex items-center justify-between hover:shadow-md transition cursor-pointer w-[24%]"
+              key={"views count"}
+              className="p-4 border-black/5 bg-blue-50 flex items-center justify-between hover:shadow-md transition cursor-pointer w-[24%]"
             >
               <div className="items-center gap-x-4 align-middle w-full">
                 <div className="font-semibold text-center">{"Views"}</div>
-                <div className="font-semibold text-4xl text-center">
-                  {numberFormatter(
+                <div className="font-bold text-4xl text-center">
+                  {formatLargeNumber(
                     analyticsData?.items[0].statistics.viewCount
                   )}
                 </div>
               </div>
             </BigCard>
+            <BigCard
+              key={"views count"}
+              className="p-4 border-black/5 bg-green-50 flex items-center justify-between hover:shadow-md transition cursor-pointer w-[24%]"
+            >
+              <div className="items-center gap-x-4 align-middle w-full">
+                <div className="font-semibold text-center">
+                  {"Newsletter Subscribers"}
+                </div>
+                <div className="font-bold text-4xl text-center">
+                  {formatLargeNumber(32450)}
+                </div>
+              </div>
+            </BigCard>
+            <BigCard
+              key={"views count"}
+              className="p-4 border-black/5 bg-yellow-50 flex items-center justify-between hover:shadow-md transition cursor-pointer w-[24%]"
+            >
+              <div className="items-center gap-x-4 align-middle w-full">
+                <div className="font-semibold text-center">
+                  {"Website Views"}
+                </div>
+                <div className="font-bold text-4xl text-center">
+                  {formatLargeNumber(10112)}
+                </div>
+              </div>
+            </BigCard>
           </>
         )}
-      </div>
-      <div className="px-4 md:px-20 lg:px-32 flex flex-row justify-between w-100">
+      </div> */}
+      <div className="flex flex-row justify-between w-100">
         <BigCard
           onClick={() => router.push("/create-new")}
           key={"/create-new"}
-          className="p-4 border-black/5 flex items-center justify-between hover:shadow-md transition cursor-pointer w-[48%]"
+          className="p-4 border-black/5 flex items-center justify-between hover:shadow-md transition cursor-pointer w-[49.3%]"
         >
           <div className="flex items-center gap-x-4">
             <div className={cn("p-2 w-fit rounded-md bg-red-100")}>
@@ -165,7 +191,7 @@ export default function HomePage() {
         <BigCard
           onClick={() => router.push("/create-new")}
           key={"/create-new"}
-          className="p-4 border-black/5 flex items-center justify-between hover:shadow-md transition cursor-pointer w-[48%]"
+          className="p-4 border-black/5 flex items-center justify-between hover:shadow-md transition cursor-pointer w-[49.3%]"
         >
           <div className="flex items-center gap-x-4">
             <div className={cn("p-2 w-fit rounded-md bg-green-100")}>
@@ -176,7 +202,7 @@ export default function HomePage() {
           <ArrowRight className="w-5 h-5" />
         </BigCard>
       </div>
-      <div className="px-4 md:px-20 lg:px-32 py-10 justify-between flex flex-row">
+      {/* <div className="py-10 justify-between flex flex-row">
         <Button onClick={connectYoutubeAccount} className="bg-red-500">
           <Youtube className="mr-2 h-4 w-4" /> Connect Youtube Account
         </Button>
@@ -189,10 +215,29 @@ export default function HomePage() {
         <Button className="bg-black" onClick={postToWordpress}>
           <Twitter className="mr-2 h-4 w-4" /> Post to Wordpress
         </Button>
-      </div>
-      <div className="px-4 md:px-20 lg:px-32 py-2">
+      </div> */}
+      <div className="py-2 pt-7">
         <Dropzone uploadVideo={uploadVideo} />
       </div>
+      <div className="py-4 flex justify-between items-start align-top">
+        <div className="flex-shrink-0" style={{ maxWidth: "49%" }}>
+          <TwitterPost
+            userName={analyticsData?.items[0].snippet.title}
+            userHandle={analyticsData?.items[0].snippet.customUrl}
+          />
+        </div>
+        <div className="flex-shrink-0" style={{ maxWidth: "49%" }}>
+          <LinkedinPost userName={analyticsData?.items[0].snippet.title} />
+        </div>
+      </div>
+
+      {/* <div
+        className={`absolute inset-x-0 bottom-12 flex items-center justify-center ${
+          isHidden ? "hidden" : ""
+        }`}
+      >
+        <ScrollDown />
+      </div> */}
     </div>
   );
 }

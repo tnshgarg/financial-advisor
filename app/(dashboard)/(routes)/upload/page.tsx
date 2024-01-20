@@ -1,89 +1,34 @@
 // pages/upload.js
 "use client";
-import { useState } from "react";
 import axios from "axios";
+import { useState } from "react";
 
 export default function Upload() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [privacyStatus, setPrivacyStatus] = useState("public");
   const [file, setFile] = useState(null);
 
   const handleFileChange = (e: any) => {
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
+    setFile(e.target.files[0]);
   };
 
-  const uploadVideo = async (file: any, title: any, description: any) => {
+  const handleUpload = async (file: any) => {
     const formData = new FormData();
-    formData.append("videoFile", file);
-    formData.append("title", title);
-    formData.append("description", description);
+    formData.append("file", file);
 
     try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+      // Upload file to your backend (create a separate API route)
+      const response = await axios.post("/api/storage-upload", formData);
 
-      const data = await response.json();
-
-      if (data.success) {
-        console.log("Video uploaded successfully. Video ID:", data.videoId);
-      } else {
-        console.error("Failed to upload video:", data.error);
-      }
+      // Handle response from backend
+      console.log(response.data);
     } catch (error) {
-      console.error("Error uploading video:", error);
+      console.error("Error uploading file:", error);
     }
-  };
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-
-    uploadVideo(file, title, description);
   };
 
   return (
     <div>
-      <h1>Upload Video</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Title:
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </label>
-        <br />
-        <label>
-          Description:
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </label>
-        <br />
-        <label>
-          Privacy Status:
-          <select
-            value={privacyStatus}
-            onChange={(e) => setPrivacyStatus(e.target.value)}
-          >
-            <option value="public">Public</option>
-            <option value="private">Private</option>
-            <option value="unlisted">Unlisted</option>
-          </select>
-        </label>
-        <br />
-        <label>
-          Video File:
-          <input type="file" accept="video/*" onChange={handleFileChange} />
-        </label>
-        <br />
-        <button type="submit">Upload</button>
-      </form>
+      <input type="file" onChange={handleFileChange} />
+      <button onClick={() => handleUpload(file)}>Upload</button>
     </div>
   );
 }

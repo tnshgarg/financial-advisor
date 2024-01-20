@@ -1,27 +1,27 @@
 "use client";
 
-import * as z from "zod";
 import axios from "axios";
-import { Download, Lightbulb, StickyNote } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { toast } from "react-hot-toast";
+import { Download, Edit, Lightbulb } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ChatCompletionRequestMessage } from "openai";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import * as z from "zod";
 
 import { BotAvatar } from "@/components/bot-avatar";
 import { Heading } from "@/components/heading";
-import { Button } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { cn } from "@/lib/utils";
 import { Loader } from "@/components/loader";
-import { UserAvatar } from "@/components/user-avatar";
+import { Button } from "@/components/ui/button";
 import { Empty } from "@/components/ui/empty";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { UserAvatar } from "@/components/user-avatar";
 import { useProModal } from "@/hooks/use-pro-modal";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { formSchema } from "./constants";
 import { Textarea } from "@/components/ui/textarea";
+import { formSchema } from "./constants";
 
 const CreateNew = () => {
   const router = useRouter();
@@ -137,16 +137,9 @@ const CreateNew = () => {
                 )}
               >
                 {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                <p
-                  className={cn(
-                    "text-sm",
-                    message.role === "user" ? "mt-2" : ""
-                  )}
-                >
-                  {message.content}
-                </p>
+                <div dangerouslySetInnerHTML={{ __html: message.content! }} />
                 {message.role !== "user" && (
-                  <div>
+                  <div className="flex flex-row">
                     <div
                       onClick={() =>
                         createAndDownloadFile(
@@ -154,22 +147,29 @@ const CreateNew = () => {
                         )
                       }
                       className={cn(
-                        "p-2 w-fit rounded-md bg-gray-200 cursor-pointer"
+                        "p-2 w-fit rounded-md bg-gray-200 cursor-pointer relative group"
                       )}
                     >
+                      <span className="invisible group-hover:visible absolute top-full left-1/2 transform -translate-x-1/2 bg-white p-2 border border-gray-300 rounded">
+                        Download
+                      </span>
                       <Download className={cn("w-3 h-3")} />
                     </div>
-                    <Button
+                    <div
                       onClick={() =>
-                        router.push(
-                          `/create-new-youtube-script?script=${message.content}`
+                        createAndDownloadFile(
+                          message.content ? message.content : ""
                         )
                       }
-                      className={cn("p-2 w-fit rounded-md")}
+                      className={cn(
+                        "p-2 w-fit rounded-md bg-gray-200 cursor-pointer ml-4 relative group"
+                      )}
                     >
-                      <StickyNote className={cn("w-3 h-3")} />
-                      Edit Script
-                    </Button>
+                      <span className="invisible group-hover:visible absolute top-full left-1/2 transform -translate-x-1/2 bg-white p-2 border border-gray-300 rounded">
+                        Edit
+                      </span>
+                      <Edit className={cn("w-3 h-3")} />
+                    </div>
                   </div>
                 )}
               </div>

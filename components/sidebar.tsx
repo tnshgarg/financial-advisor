@@ -1,24 +1,19 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { Montserrat } from "next/font/google";
 import {
+  FolderClosed,
   LayoutDashboard,
   MessageSquare,
-  Settings,
-  Target,
-  File,
-  Upload,
-  UploadIcon,
   Plus,
-  FolderClosed,
+  Settings,
   StickyNote,
+  Target,
 } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { cn } from "@/lib/utils";
 import { FreeCounter } from "@/components/free-counter";
+import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 
 const routes = [
@@ -26,6 +21,11 @@ const routes = [
     label: "Dashboard",
     icon: LayoutDashboard,
     href: "/dashboard",
+  },
+  {
+    label: "Services",
+    icon: LayoutDashboard,
+    href: "/services",
   },
   {
     label: "Social Posts Generator",

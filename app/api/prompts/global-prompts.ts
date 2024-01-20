@@ -58,7 +58,19 @@ export const ytScript = (videoTopic: string): string => {
     Create a Youtube Video Script on the Topic: \n
     ${videoTopic} \n\n
     The Script should be detailed, cover the pointers in details and should be of a friendly tone!\n
-    Youtube Video Script:\n\n
+    The Script should be in HTML Format, will all the relevant tags\n
+    Add BR Tag, after every heading completion\n
+    Youtube Video Script in HTML Format:\n\n
+`;
+};
+
+export const createNew = (videoTopic: string): string => {
+  return `
+    Create a Youtube Video Script on the Topic: \n
+    ${videoTopic} \n\n
+    The Script should be detailed, cover the pointers in details and should be of a friendly tone!\n
+    The Script should be in Markdown Format, which is compatible with react-markdown library \n
+    Youtube Video Script in Markdown Format:\n\n
 `;
 };
 

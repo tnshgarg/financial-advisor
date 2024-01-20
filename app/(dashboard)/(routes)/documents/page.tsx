@@ -1,168 +1,103 @@
 "use client";
 
-import Editor from "@/components/editor";
-import React from "react";
-import * as z from "zod";
-import axios from "axios";
-import { Lightbulb } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { toast } from "react-hot-toast";
-import { useRouter } from "next/navigation";
-
-import { Heading } from "@/components/heading";
 import { Button } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { Loader } from "@/components/loader";
-import { useProModal } from "@/hooks/use-pro-modal";
-
-import { formSchema } from "../create-new/constants";
-import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { generateRandomId } from "@/lib/utils";
+import axios from "axios";
+import { Download, FolderIcon, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 function DocumentsPage() {
   const router = useRouter();
-  const proModal = useProModal();
-  const [generatedContent, setGeneratedContent] = useState<any>("");
+  const [folderName, setFolderName] = useState<string>("");
+  const [documents, setDocuments] = useState<any[] | undefined>();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      prompt: "",
-    },
-  });
-
-  const isLoading = form.formState.isSubmitting;
-
-  type PartialBlock = {
-    id?: string;
-    type?: string;
-    content?: string;
+  const fetchDocuments = async () => {
+    try {
+      const response = await axios.get("/api/documents");
+      setDocuments(response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Fetch Documents Error: ", error);
+    }
   };
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      const response = await axios.post("/api/video-script", {
-        videoTopic: values.prompt,
-      });
-      console.log("GPT Response: ", response.data);
-      const responseContent: string = response.data?.content;
-      const formattedContent: PartialBlock[] = [
-        {
-          type: "paragraph",
-          content: responseContent,
-        },
-      ];
-      setGeneratedContent(formattedContent);
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
 
-      form.reset();
-    } catch (error: any) {
-      if (error?.response?.status === 403) {
-        proModal.onOpen();
-      } else {
-        toast.error("Something went wrong.");
-      }
+  const createDocument = async () => {
+    try {
+      const response = await axios.post("/api/documents", {
+        folderName: folderName,
+        folderId: generateRandomId(10),
+      });
+
+      console.log("Document Creation Data: ", response.data);
+      if (documents)
+        setDocuments((prevDocuments) => [response.data, ...documents]);
+      setFolderName("");
+    } catch (error) {
+      console.log("Document Creation Error: ", error);
     } finally {
       router.refresh();
     }
-
-    // setGeneratedContent(
-    //   JSON.stringify([
-    //     {
-    //       id: "268d5bb5-6a20-446e-8870-31151eb390c7",
-    //       type: "paragraph",
-    //       props: {
-    //         textColor: "default",
-    //         backgroundColor: "default",
-    //         textAlignment: "left",
-    //       },
-    //       content: [
-    //         {
-    //           type: "text",
-    //           text: "text",
-    //           styles: {},
-    //         },
-    //       ],
-    //       children: [],
-    //     },
-    //   ])
-    // );
-    // router.refresh();
-  };
-
-  const createAndDownloadFile = (text: string) => {
-    const blob = new Blob([text], { type: "text/plain" });
-
-    const downloadLink = document.createElement("a");
-    downloadLink.href = URL.createObjectURL(blob);
-    downloadLink.download = "draaft-yt-script.txt";
-
-    // Step 4: Trigger Download
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
   };
 
   return (
-    <div>
-      <div className="bg-[#fffdf9]">
-        <Heading
-          title="Work on Your Next Idea!"
-          description="Create Your Next Video Script in less than 30 seconds and Make Changes Right Here!"
-          icon={Lightbulb}
-          iconColor="text-red-500"
-          bgColor="bg-red-500/10"
-        />
-        <div className="px-4 lg:px-8">
-          <div>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="rounded-lg border w-full p-4 px-3 md:px-6 focus-within:shadow-sm grid grid-cols-12 gap-2 bg-white"
+    <div className="px-10 md:px-20 lg:px-12">
+      <Popover>
+        <PopoverTrigger className=" border-black shadow-md border-4 font-bold bg-white px-4 py-2 rounded-3xl text-lg text-black flex flex-row w-full align-middle items-center justify-center">
+          <Plus className="mr-2" /> New Folder
+        </PopoverTrigger>
+        <PopoverContent className="w-[400px]">
+          <div className="flex flex-row align-middle items-center">
+            <Label className="font-semibold text-lg w-full">Folder Name</Label>
+            <Input
+              value={folderName}
+              onChange={(e) => setFolderName(e.target.value)}
+              placeholder="Enter Document Title"
+            />
+          </div>
+          <Button className="h-8 bg-black w-full mt-4" onClick={createDocument}>
+            Create Document
+          </Button>
+        </PopoverContent>
+      </Popover>
+      <div className="w-full flex flex-wrap pt-10">
+        {documents
+          ?.map((value: any, index: number) => {
+            return (
+              <Card
+                onClick={() => {
+                  router.push(`/documents/${value.folderId}`);
+                }}
+                key={value.folderId} // Ensure each element has a unique key
+                className="shadow-sm rounded-xl p-6 w-full sm:w-1/2 md:w-1/3 lg:w-1/6 mb-4 sm:mb-8 mr-7 cursor-pointer hover:shadow-lg flex flex-row items-center"
               >
-                <FormField
-                  name="prompt"
-                  render={({ field }) => (
-                    <FormItem className="col-span-12 lg:col-span-10 flex flex-row align-middle">
-                      <FormControl className="mt-2 p-0">
-                        <Textarea
-                          className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent ml-4 -pt-10 text-md"
-                          disabled={isLoading}
-                          placeholder="Explain Your Next Youtube Video Idea!"
-                          {...field}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  className="col-span-12 lg:col-span-2 w-full bg-black text-md"
-                  type="submit"
-                  disabled={isLoading}
-                  size="default"
-                >
-                  Generate
-                </Button>
-              </form>
-            </Form>
-          </div>
-          <div className="space-y-4 mt-4">
-            {isLoading && (
-              <div className="p-8 rounded-lg w-full flex items-center justify-center bg-[#fffdf9]">
-                <Loader />
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-      <div className="px-8 py-2">
-        <Editor
-          editable
-          initialContent={generatedContent}
-          onChange={(text) => {
-            console.log("TEXT: ", text);
-          }}
-        />
+                <div className="w-[70%] items-center justify-center">
+                  <FolderIcon
+                    className="ml-auto mr-auto"
+                    width={60}
+                    height={60}
+                  />
+                  <p className="text-center">{value?.folderName}</p>
+                </div>
+                <div className="w-[30%]">
+                  <Download className="ml-auto mr-auto" />
+                </div>
+              </Card>
+            );
+          })
+          .reverse()}
       </div>
     </div>
   );
