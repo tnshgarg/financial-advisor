@@ -100,16 +100,15 @@
 //   }
 // }
 
-import { NextResponse } from "next/server";
-import fs, { access } from "fs";
-import axios from "axios";
 import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs";
+import axios from "axios";
+import { NextResponse } from "next/server";
 import { Readable } from "stream";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
-export async function uploadVideoToYouTube(
+async function uploadVideoToYouTube(
   videoFile: any,
   accessToken: string,
   apiKey: string

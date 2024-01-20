@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
@@ -10,12 +10,9 @@ export async function POST(req: Request) {
       await prismadb.authentication.create({
         data: {
           id: userId,
-          userEmail: String(user?.emailAddresses?.[0]),
-          driveOAuthClient: "default_value",
           youtubeOAuthClient: "default_value", // Provide a default value or adjust as needed
           linkedinOAuthClient: "default_value",
           twitterOAuthClient: "default_value",
-          wordpressOAuthClient: "default_value",
         },
       });
 

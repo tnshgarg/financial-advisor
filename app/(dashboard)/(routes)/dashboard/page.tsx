@@ -106,12 +106,12 @@ export default function HomePage() {
     <div className="px-4 md:px-20 lg:px-12">
       <div className="mb-8 space-y-4">
         <h2 className="text-2xl md:text-5xl font-bold text-center">
-          Let's Create Something Views-Worthy!
+          {"Let's Create Something Views-Worthy!"}
         </h2>
         <p className="text-muted-foreground font-light text-sm md:text-lg text-center px-[120px]">
-          You can either work on a new Idea, where you want to generate a
-          Youtube Video Script, All The Assets along with it or you can create
-          assets for an existing video!
+          {
+            "You can either work on a new Idea, where you want to generate a\n Youtube Video Script, All The Assets along with it or you can create\n assets for an existing video!"
+          }
         </p>
       </div>
       {/* <div className="flex flex-row justify-between w-100 mb-7">

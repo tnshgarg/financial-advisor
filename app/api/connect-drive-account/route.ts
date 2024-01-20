@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import { google } from "googleapis";
 import { oauth2Client } from "@/lib/oauth";
+import { google } from "googleapis";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   }
 }
 
-export const getData = async () => {
+const getData = async () => {
   // allows you to use drive API methods e.g. listing files, creating files.
   console.log("Auth2 Client: ", oauth2Client);
   const drive = google.drive({ version: "v3", auth: oauth2Client });
@@ -57,11 +57,11 @@ export async function GET(req: any) {
   }
 }
 
-export const getDriveClient = () => {
+const getDriveClient = () => {
   return google.drive({ version: "v3", auth: oauth2Client });
 };
 
-export const createFileInDrive = async (fileDetails: {
+const createFileInDrive = async (fileDetails: {
   name: any;
   mimetype: any;
   stream: any;
