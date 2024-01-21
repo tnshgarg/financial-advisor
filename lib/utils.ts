@@ -38,3 +38,11 @@ export function generateRandomId(length: number = 10): string {
 
   return randomId;
 }
+
+export function currencyFetcher(currency: string) {
+  if (currency == "rupee") {
+    return "₹";
+  } else {
+    return "$";
+  }
+}

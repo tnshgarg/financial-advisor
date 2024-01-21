@@ -83,20 +83,6 @@ body,
   }
 }
 
-@font-face {
-  font-family: "Degular";
-  src: url("/fonts/Degular-Black.woff2") format("woff2"),
-    url("/fonts/Degular-Bold.woff") format("woff"),
-    url("/fonts/Degular-Light.woff") format("woff"),
-    url("/fonts/Degular-MediumItalic.woff") format("woff"),
-    url("/fonts/Degular-Regular.woff") format("woff"),
-    url("/fonts/Degular-Semibold.woff") format("woff"),
-    url("/fonts/Degular-Thin.woff") format("woff"),
-    url("/fonts/DegularDisplay-Black.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
-}
-
 h2 {
   font-family: var(--font-degular);
 }

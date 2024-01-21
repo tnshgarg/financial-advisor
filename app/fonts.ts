@@ -1,7 +1,7 @@
 import { DM_Sans } from "next/font/google";
 import localFont from "next/font/local";
 
-export const font = DM_Sans({ weight: "500", subsets: ["latin"] });
+export const dm_sans = DM_Sans({ weight: "500", subsets: ["latin"] });
 export const degular = localFont({
   src: [
     {

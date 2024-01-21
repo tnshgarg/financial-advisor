@@ -103,7 +103,7 @@ export const Sidebar = ({
             color="red"
           >
             <Plus className="mr-2 font-bold" />
-            Upload Video
+            Work on New Idea
           </Button>
         </div>
 

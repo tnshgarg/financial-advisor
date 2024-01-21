@@ -1,14 +1,13 @@
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
 
-import { ToasterProvider } from "@/components/toaster-provider";
 import { ModalProvider } from "@/components/modal-provider";
-import { CrispProvider } from "@/components/crisp-provider";
+import { ToasterProvider } from "@/components/toaster-provider";
 import localFont from "next/font/local";
 
-import "./globals.css";
 import Head from "next/head";
+import "./globals.css";
 
 const font = DM_Sans({ weight: "500", subsets: ["latin"] });
 const degular = localFont({

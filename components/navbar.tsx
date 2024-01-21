@@ -1,7 +1,6 @@
 import { UserButton } from "@clerk/nextjs";
 
-import { Zap } from "lucide-react";
-import { Button } from "./ui/button";
+import { ShoppingBag } from "lucide-react";
 
 const Navbar = async ({
   websiteName,
@@ -30,10 +29,13 @@ const Navbar = async ({
           />
         </span> */}
       </div>
-      <Button variant="premium" className="w-50 mr-4 h-9">
+      {/* <Button variant="premium" className="w-50 mr-4 h-9">
         Upgrade
         <Zap className="w-4 h-4 ml-2 fill-white" />
-      </Button>
+      </Button> */}
+      <div className="flex flex-row items-center mr-4 cursor-pointer hover:bg-slate-100 rounded-full">
+        <ShoppingBag className="mr-2" />
+      </div>
       <UserButton afterSignOutUrl="/" />
     </div>
   );
