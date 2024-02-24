@@ -65,13 +65,17 @@ export const ytScript = (videoTopic: string): string => {
 };
 
 export const createNew = (videoTopic: string): string => {
-  return `
-    Create a Youtube Video Script on the Topic: \n
-    ${videoTopic} \n\n
-    The Script should be detailed, cover the pointers in details and should be of a friendly tone!\n
-    The Script should be in Markdown Format, which is compatible with react-markdown library \n
-    Youtube Video Script in Markdown Format:\n\n
-`;
+  //   return `
+  //     Create a Youtube Video Script on the Topic: \n
+  //     ${videoTopic} \n\n
+  //     The Script should be detailed, cover the pointers in details and should be of a friendly tone!\n
+  //     The Script should be in Markdown Format, which is compatible with react-markdown library \n
+  //     Youtube Video Script in Markdown Format:\n\n
+  // `;
+  return `Please recommend me places to visit from Banasthali University in Rajasthan. The format should in this format: {
+  placeName: "",
+  placeCoordinates: "",
+}`;
 };
 
 export const youtubeSEO = (videoTopic: string): string => {

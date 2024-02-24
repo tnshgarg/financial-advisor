@@ -53,7 +53,8 @@ function SignupForm() {
       email: values.email,
       password: values.password,
     });
-    router.refresh();
+    router.push("/");
+    // router.refresh();
   };
 
   const handleSignOut = async () => {
@@ -64,7 +65,7 @@ function SignupForm() {
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSignUp)}>
+        <form onSubmit={form.handleSubmit(handleSignIn)}>
           <FormField
             name="email" // Make sure this matches the field name in formSchema
             render={({ field }) => (
@@ -102,7 +103,7 @@ function SignupForm() {
             disabled={isLoading}
             size="icon"
           >
-            Sign Up
+            Sign In
           </Button>
         </form>
       </Form>

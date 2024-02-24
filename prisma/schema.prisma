@@ -25,41 +25,10 @@ model UserSubscription {
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
 }
 
-model youtubeScript {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  content     String   @default("")
-  scriptTitle String   @default("")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Authentication {
-  id                  String   @id @default(cuid())
-  // userEmail            String   @unique
-  // driveOAuthClient     Json
-  youtubeOAuthClient  Json
-  linkedinOAuthClient Json
-  twitterOAuthClient  Json
-  // wordpressOAuthClient Json
-  createdAt           DateTime @default(now())
-  // updatedAt            DateTime @updatedAt
-}
-
-model Folders {
-  id         String   @id @default(cuid())
-  userId     String
-  folderId   String
-  folderName String
-  createdAt  DateTime @default(now())
-}
-
-model Documents {
-  id            String   @id @default(cuid())
-  userId        String
-  documentId    String
-  folderId      String
-  documentTitle String
-  downloadUrl   String   @default("")
-  createdAt     DateTime @default(now())
-}
+// model Authentication {
+//   id                  String   @id @default(cuid())
+//   youtubeOAuthClient  Json
+//   linkedinOAuthClient Json
+//   twitterOAuthClient  Json
+//   createdAt           DateTime @default(now())
+// }

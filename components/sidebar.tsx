@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  FolderClosed,
   LayoutDashboard,
   MessageSquare,
   Plus,
@@ -10,7 +9,7 @@ import {
   Target,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { FreeCounter } from "@/components/free-counter";
 import { cn } from "@/lib/utils";
@@ -20,12 +19,7 @@ const routes = [
   {
     label: "Dashboard",
     icon: LayoutDashboard,
-    href: "/dashboard",
-  },
-  {
-    label: "Services",
-    icon: LayoutDashboard,
-    href: "/services",
+    href: "/",
   },
   {
     label: "Social Posts Generator",
@@ -38,39 +32,10 @@ const routes = [
     href: "/youtube-seo",
   },
   {
-    label: "Your Documents",
-    icon: FolderClosed,
-    href: "/documents",
-  },
-  {
     label: "Create Youtube Script",
     icon: StickyNote,
     href: "/create-new",
   },
-  // {
-  //   label: "Image Generation",
-  //   icon: ImageIcon,
-  //   color: "text-pink-700",
-  //   href: "/image",
-  // },
-  // {
-  //   label: "Video Generation",
-  //   icon: VideoIcon,
-  //   color: "text-orange-700",
-  //   href: "/video",
-  // },
-  // {
-  //   label: "Music Generation",
-  //   icon: Music,
-  //   color: "text-emerald-500",
-  //   href: "/music",
-  // },
-  // {
-  //   label: "Code Generation",
-  //   icon: Code,
-  //   color: "text-green-700",
-  //   href: "/code",
-  // },
   {
     label: "Settings",
     icon: Settings,
@@ -79,13 +44,14 @@ const routes = [
 ];
 
 export const Sidebar = ({
-  apiLimitCount = 0,
   isPro = false,
+  apiLimitCount = 0,
 }: {
-  apiLimitCount: number;
   isPro: boolean;
+  apiLimitCount: number;
 }) => {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#fffdf9] border-r-[0.2px] border-gray-200">
@@ -99,8 +65,9 @@ export const Sidebar = ({
         </Link>
         <div className="px-3 pb-6">
           <Button
-            className="bg-red-500 w-full text-md font-bold rounded-md"
+            className="bg-red-500 w-full text-md font-bold rounded-md hover:bg-red-600 animate-in"
             color="red"
+            onClick={() => router.push("/create-new")}
           >
             <Plus className="mr-2 font-bold" />
             Work on New Idea

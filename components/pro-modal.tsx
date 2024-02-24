@@ -1,23 +1,23 @@
 "use client";
 
 import axios from "axios";
-import { useState } from "react";
 import { Check, Zap } from "lucide-react";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { useProModal } from "@/hooks/use-pro-modal";
 import { tools } from "@/constants";
-import { Card } from "@/components/ui/card";
+import { useProModal } from "@/hooks/use-pro-modal";
 import { cn } from "@/lib/utils";
 
 export const ProModal = () => {
@@ -28,6 +28,8 @@ export const ProModal = () => {
     try {
       setLoading(true);
       const response = await axios.get("/api/stripe");
+
+      console.log("ResponseDATAURL: ", response.data.url);
 
       window.location.href = response.data.url;
     } catch (error) {

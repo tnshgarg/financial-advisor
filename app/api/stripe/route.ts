@@ -46,7 +46,7 @@ export async function GET() {
               name: "Draaft Pro",
               description: "Unlimited AI Generations",
             },
-            unit_amount: 49900,
+            unit_amount: 2900,
             recurring: {
               interval: "month",
             },

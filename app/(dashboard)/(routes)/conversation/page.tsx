@@ -1,28 +1,26 @@
 "use client";
 
-import * as z from "zod";
 import axios from "axios";
 import { Linkedin, MessageSquare, Twitter } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { ChatCompletionRequestMessage } from "openai";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import * as z from "zod";
 
 import { BotAvatar } from "@/components/bot-avatar";
 import { Heading } from "@/components/heading";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { cn } from "@/lib/utils";
 import { Loader } from "@/components/loader";
-import { UserAvatar } from "@/components/user-avatar";
+import { Button } from "@/components/ui/button";
 import { Empty } from "@/components/ui/empty";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { UserAvatar } from "@/components/user-avatar";
 import { useProModal } from "@/hooks/use-pro-modal";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { formSchema } from "./constants";
-import { Youtube } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,6 +29,8 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Youtube } from "lucide-react";
+import { formSchema } from "./constants";
 
 const CommunityPostComponent = () => {
   return (
@@ -80,11 +80,9 @@ const ConversationPage = () => {
         role: "user",
         content: values.prompt,
       };
-      // console.log("userMessage: ", userMessage);
-      // const newMessages = [...messages, userMessage];
 
       const response = await axios.post("/api/conversation", {
-        ytUrl: values.prompt,
+        value: values.prompt,
         postType: dropdownValue,
       });
       setMessages((current) => [...current, userMessage, response.data]);

@@ -1,9 +1,10 @@
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 
 export const BotAvatar = () => {
   return (
-    <Avatar className="h-8 w-8">
-      <AvatarImage className="p-1" src="/logo.png" />
+    <Avatar className="">
+      <h1 className={cn("text-4xl font-bold text-black")}>@</h1>
     </Avatar>
   );
 };
