@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { BookOpen } from 'lucide-react';
 
 const font = Montserrat({ weight: "600", subsets: ["latin"] });
 
@@ -16,10 +17,10 @@ export const LandingNavbar = () => {
     <nav className="p-4 bg-transparent flex items-center justify-between bg-[#fffdf9]">
       <Link href="/" className="flex items-center">
         <div className="relative mr-2">
-          <h1 className={cn("text-4xl font-bold text-red-500")}>@</h1>
+          <BookOpen className="w-8 h-8 text-blue-600" />
         </div>
-        <h1 className={cn("text-4xl font-bold text-black", font.className)}>
-          draaft
+        <h1 className={cn("text-2xl font-bold text-black", font.className)}>
+          Rural FinanceAI
         </h1>
       </Link>
       <div className="flex items-center gap-x-2">

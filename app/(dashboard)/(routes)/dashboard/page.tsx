@@ -11,14 +11,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Empty } from "@/components/ui/empty";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -30,86 +22,153 @@ import axios from "axios";
 import {
   Copy,
   Edit,
-  Linkedin,
   Loader,
-  Mail,
   Save,
-  Twitter,
-  Youtube,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ChatCompletionRequestMessage } from "openai";
 import { useEffect, useState } from "react";
+
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import { formSchema } from "../conversation/constants";
 
-const CommunityPostComponent = () => {
-  return (
-    <span className="flex flex-row align-middle ">
-      <Youtube size={"20px"} className="mr-2" /> Community Post
-    </span>
-  );
-};
+export function SpeechToText() {
+  const [transcript, setTranscript] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const [error, setError] = useState('');
 
-const TwitterThreadComponent = () => {
-  return (
-    <span className="flex flex-row align-middle">
-      <Twitter size={"20px"} className="mr-2" /> Twitter Post
-    </span>
-  );
-};
+  const startListening = () => {
+    if (!('webkitSpeechRecognition' in window)) {
+      setError('Your browser does not support Speech Recognition.');
+      return;
+    }
 
-const LinkedinPostComponent = () => {
-  return (
-    <span className="flex flex-row align-middle">
-      <Linkedin size={"20px"} className="mr-2" /> LinkedIn Post
-    </span>
-  );
-};
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
 
-const WordpressComponent = () => {
-  return (
-    <span className="flex flex-row align-middle">
-      <Linkedin size={"20px"} className="mr-2" /> Wordpress Blog Post
-    </span>
-  );
-};
+    recognition.lang = 'hi-IN'; // Set the language (e.g., 'ta-IN' for Tamil, 'kn-IN' for Kannada)
+    recognition.interimResults = true; // To show intermediate results
 
-const EmailComponent = () => {
-  return (
-    <span className="flex flex-row align-middle">
-      <Mail size={"20px"} className="mr-2" /> Newsletter
-    </span>
-  );
-};
+    recognition.onstart = () => {
+      setIsListening(true);
+      setError('');
+    };
 
-const ScriptComponent = () => {
-  return (
-    <span className="flex flex-row align-middle">
-      <Youtube size={"20px"} className="mr-2" /> Youtube Script
-    </span>
-  );
-};
+    recognition.onerror = (event: { error: any; }) => {
+      setIsListening(false);
+      setError(`Error: ${event.error}`);
+    };
 
-const SEOComponent = () => {
+    recognition.onresult = (event: { results: Iterable<unknown> | ArrayLike<unknown>; }) => {
+      const result = Array.from(event.results)
+        .map((result: any) => result[0].transcript)
+        .join('');
+      setTranscript(result);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
+
+  const stopListening = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.stop();
+    setIsListening(false);
+  };
+
   return (
-    <span className="flex flex-row align-middle">
-      <Youtube size={"20px"} className="mr-2" /> Youtube Titles & Tags
-    </span>
+    <div className="p-4 bg-white shadow-md rounded-lg max-w-md mx-auto">
+      <h1 className="text-xl font-bold text-gray-900 mb-4">Speech to Text</h1>
+
+      <div className="mb-4">
+        <p className="text-sm text-gray-600">
+          Click the button below and speak in an Indian language (e.g., Hindi, Tamil, Kannada).
+        </p>
+      </div>
+
+      <div className="flex space-x-2">
+        <button
+          onClick={startListening}
+          disabled={isListening}
+          className={`px-4 py-2 rounded-md font-medium ${isListening ? 'bg-gray-400' : 'bg-blue-600 text-white'}`}
+        >
+          {isListening ? 'Listening...' : 'Start Listening'}
+        </button>
+        <button
+          onClick={stopListening}
+          disabled={!isListening}
+          className={`px-4 py-2 rounded-md font-medium ${!isListening ? 'bg-gray-400' : 'bg-red-600 text-white'}`}
+        >
+          Stop
+        </button>
+      </div>
+
+      {error && <p className="text-red-600 mt-4">{error}</p>}
+
+      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+        <h2 className="font-semibold text-gray-900">Transcript</h2>
+        <p className="text-gray-700">{transcript || 'No speech detected yet...'}</p>
+      </div>
+    </div>
   );
-};
+}
 
 export default function HomePage() {
   const router = useRouter();
   const proModal = useProModal();
-  const [dropdownSelection, setDropdownSelection] = useState<React.ReactNode>(
-    <h1>Select Platform 👇</h1>
-  );
-  const [dropdownValue, setDropdownValue] = useState<string>("");
   const [contentEditable, setContentEditable] = useState<boolean>(false);
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const [transcript, setTranscript] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const [error, setError] = useState('');
+
+  const startListening = () => {
+    if (!('webkitSpeechRecognition' in window)) {
+      setError('Your browser does not support Speech Recognition.');
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = 'hi-IN'; // Set the language (e.g., 'ta-IN' for Tamil, 'kn-IN' for Kannada)
+    recognition.interimResults = true; // To show intermediate results
+
+    recognition.onstart = () => {
+      setIsListening(true);
+      setError('');
+    };
+
+    recognition.onerror = (event: { error: any; }) => {
+      setIsListening(false);
+      setError(`Error: ${event.error}`);
+    };
+
+    recognition.onresult = (event: { results: Iterable<unknown> | ArrayLike<unknown>; }) => {
+      const result = Array.from(event.results)
+        .map((result: any) => result[0].transcript)
+        .join('');
+      setTranscript(result);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -127,26 +186,26 @@ export default function HomePage() {
 
   const checkAuth = async () => {
     const response = await axios.get("/api/auth-checker");
-    console.log("Response: ", response);
+    // console.log("Response: ", response);
     if (response.data.status == 401) setIsLoggedInModalVisible(true);
   };
 
   const isLoading = form.formState.isSubmitting;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async () => {
     try {
-      if (values.prompt.length == 0) return;
+      if (transcript.length == 0) return;
 
       const userMessage: ChatCompletionRequestMessage = {
         role: "user",
-        content: values.prompt,
+        content: transcript,
       };
 
       const response = await axios.post("/api/conversation", {
-        value: values.prompt,
-        postType: dropdownValue,
+        data: transcript,
       });
-      console.log("RESPO: ", response);
+      // console.log("RESPO: ", response);
+
       if (response.status == 401) setIsLoggedInModalVisible(true);
       setMessages((current) => [...current, userMessage, response.data]);
 
@@ -160,38 +219,6 @@ export default function HomePage() {
     } finally {
       router.refresh();
     }
-  };
-
-  function dropdownStyleSelector() {
-    if (dropdownValue == "youtube") {
-      return "bg-red-100";
-    } else if (dropdownValue == "twitter") {
-      return "bg-blue-100";
-    } else if (dropdownValue == "linkedin") {
-      return "bg-blue-200";
-    } else {
-      return "";
-    }
-  }
-
-  const createAndDownloadFile = (text: string) => {
-    const blob = new Blob([text], { type: "text/plain" });
-
-    const downloadLink = document.createElement("a");
-    downloadLink.href = URL.createObjectURL(blob);
-    downloadLink.download = "draaft-yt-script.txt";
-
-    // Step 4: Trigger Download
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-  };
-
-  const copyToClipboard = (content: string) => {
-    navigator.clipboard.writeText(content);
-    toast("Post Copied To Clipboard", {
-      style: { color: "green" },
-    });
   };
 
   return (
@@ -211,177 +238,44 @@ export default function HomePage() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="rounded-lg border w-full p-4 px-3 py-2 md:px-6 focus-within:shadow-sm grid grid-cols-12 gap-2 bg-white"
         >
-          <FormItem className="col-span-12 lg:col-span-10 flex flex-row align-middle">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  className={cn(
-                    "text-left w-52 border",
-                    dropdownStyleSelector()
-                  )}
-                  variant="outline"
-                >
-                  {dropdownSelection}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    className="bg-red-100 cursor-pointer"
-                    onClick={() => {
-                      setDropdownValue("youtube");
-                      setDropdownSelection(<CommunityPostComponent />);
-                    }}
-                  >
-                    <CommunityPostComponent />
-                    <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="bg-red-100 cursor-pointer"
-                    onClick={() => {
-                      setDropdownValue("script");
-                      setDropdownSelection(<ScriptComponent />);
-                    }}
-                  >
-                    <ScriptComponent />
-                    <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="bg-red-100 cursor-pointer"
-                    onClick={() => {
-                      setDropdownValue("seo");
-                      setDropdownSelection(<SEOComponent />);
-                    }}
-                  >
-                    <SEOComponent />
-                    <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="bg-blue-100 cursor-pointer"
-                    onClick={() => {
-                      setDropdownValue("twitter");
-                      setDropdownSelection(<TwitterThreadComponent />);
-                    }}
-                  >
-                    <TwitterThreadComponent />
-                    <DropdownMenuShortcut>⌘T</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="bg-blue-200 cursor-pointer"
-                    onClick={() => {
-                      setDropdownValue("linkedin");
-                      setDropdownSelection(<LinkedinPostComponent />);
-                    }}
-                  >
-                    <LinkedinPostComponent />
-                    <DropdownMenuShortcut>⌘L</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="bg-blue-200 cursor-pointer"
-                    onClick={() => {
-                      setDropdownValue("wordpress");
-                      setDropdownSelection(<WordpressComponent />);
-                    }}
-                  >
-                    <WordpressComponent />
-                    <DropdownMenuShortcut>⇧⌘S</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="bg-[#FFE01B] cursor-pointer"
-                    onClick={() => {
-                      setDropdownValue("newsletter");
-                      setDropdownSelection(<EmailComponent />);
-                    }}
-                  >
-                    <EmailComponent />
-                    <DropdownMenuShortcut>⇧⌘S</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <FormField
+          <FormItem className="col-span-12 lg:col-span-9 flex flex-row align-middle">
+            {/* <FormField
               name="prompt"
               render={({ field }) => (
                 <FormItem className="col-span-12 lg:col-span-10 flex flex-row align-middle flex-1">
                   <FormControl className="p-0">
                     <Input
-                      className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent ml-4"
+                      className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent ml-4 mt-2"
                       disabled={isLoading}
-                      placeholder={
-                        dropdownValue == "script"
-                          ? "Enter your Video Topic"
-                          : "Enter a valid Youtube Video URL"
-                      }
+                      placeholder={"Enter your query"}
                       {...field}
                     />
                   </FormControl>
                 </FormItem>
               )}
-            />
+            /> */}
+            <p className="text-gray-700 mt-2">{transcript || 'No speech detected yet...'}</p>
           </FormItem>
-          <Button
-            className="col-span-12 lg:col-span-2 w-full bg-black text-md hover:bg-red-500"
-            type="submit"
-            disabled={isLoading}
-            size="icon"
-          >
-            Generate
-          </Button>
+          <div className="flex space-x-2 w-auto">
+            <button
+              onClick={startListening}
+              disabled={isListening}
+              className={`px-4 py-2 rounded-md font-medium whitespace-nowrap ${isListening ? 'bg-gray-400' : 'bg-blue-600 text-white'}`}
+            >
+              {isListening ? 'Listening...' : 'Start Listening'}
+            </button>
+            <button
+              onClick={onSubmit}
+              disabled={isListening}
+              className={`px-4 py-2 rounded-md font-medium whitespace-nowrap ${isListening ? 'bg-gray-400' : 'bg-red-600 text-white'}`}
+            >
+              Generate
+            </button>
+          </div>
+
         </form>
       </Form>
-      {/* <div className="py-4 flex justify-between items-start align-top flex-wrap">
-        <div
-          className="flex-shrink-0"
-          style={{ maxWidth: "49%", marginBottom: 20 }}
-        >
-          <TwitterPost
-            userName={"Content Creator"}
-            userHandle={"@NextMrBeast"}
-          />
-        </div>
-        <div
-          className="flex-shrink-0"
-          style={{ maxWidth: "49%", marginBottom: 20 }}
-        >
-          <LinkedinPost userName={"Content Creator"} />
-        </div>
-        <div
-          className="flex-shrink-0"
-          style={{ maxWidth: "49%", marginBottom: 20 }}
-        >
-          <YoutubeSEO
-            content="What is Lorem Ipsum?
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-Why do we use it?
-It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making"
-            userName={"Content Creator"}
-          />
-        </div>
-        <div
-          className="flex-shrink-0"
-          style={{ maxWidth: "49%", marginBottom: 20 }}
-        >
-          <WordpressPost
-            content="What is Lorem Ipsum?
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-Why do we use it?
-It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making"
-            userName={"Content Creator"}
-          />
-        </div>
-        <div
-          className="flex-shrink-0"
-          style={{ maxWidth: "49%", marginBottom: 20 }}
-        >
-          <EmailPost
-            content="What is Lorem Ipsum?
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-Why do we use it?
-It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making"
-            userName={"Content Creator"}
-          />
-        </div>
-      </div> */}
+
       <div className="space-y-4 mt-4">
         {isLoading && (
           <div className="p-8 rounded-lg w-full flex items-center justify-center bg-[#fffdf9]">
@@ -412,51 +306,6 @@ It is a long established fact that a reader will be distracted by the readable c
                   className={cn(contentEditable ? "bg-white" : "")}
                 >
                   {message.content!}
-                </div>
-              )}
-
-              {message.role !== "user" && (
-                <div>
-                  <div className="flex flex-row mb-2">
-                    <div
-                      onClick={() => copyToClipboard(message.content!)}
-                      className={cn(
-                        "p-2 w-fit rounded-md bg-gray-200 cursor-pointer relative group"
-                      )}
-                    >
-                      <span className="invisible group-hover:visible absolute top-full left-1/2 transform -translate-x-1/2 bg-white p-2 border border-gray-300 rounded">
-                        Copy
-                      </span>
-                      <Copy className={cn("w-3 h-3")} />
-                    </div>
-                    <div
-                      onClick={() => setContentEditable(true)}
-                      className={cn(
-                        "p-2 w-fit rounded-md bg-gray-200 cursor-pointer ml-2 relative group"
-                      )}
-                    >
-                      <span className="invisible group-hover:visible absolute top-full left-1/2 transform -translate-x-1/2 bg-white p-2 border border-gray-300 rounded">
-                        Edit
-                      </span>
-                      <Edit className={cn("w-3 h-3")} />
-                    </div>
-                  </div>
-                  {contentEditable && (
-                    <div
-                      onClick={() => setContentEditable(false)}
-                      className={cn(
-                        "p-2 w-fit rounded-md bg-lime-400 cursor-pointer"
-                      )}
-                    >
-                      <span className="invisible group-hover:visible absolute top-full left-1/2 transform -translate-x-1/2 bg-white p-2 border border-gray-300 rounded">
-                        Save
-                      </span>
-                      <div className="flex flex-row items-center">
-                        <Save className={cn("w-3 h-3 mr-1")} />
-                        Save
-                      </div>
-                    </div>
-                  )}
                 </div>
               )}
             </div>
