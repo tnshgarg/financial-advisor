@@ -15,7 +15,7 @@ const ParentNavbar = async ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   };
 
   return (
-    <div className="flex items-center p-4 border-b-[0.2px] border-gray-200 mb-8">
+    <div className="flex items-center p-4 border-b-[0.2px] border-gray-200">
       <MobileSidebar isPro={true} apiLimitCount={10} />
       <div className="flex flex-row justify-end w-full ml-auto">
         <Navbar isLoggedIn={isLoggedIn} />

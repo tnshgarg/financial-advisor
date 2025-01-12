@@ -9,7 +9,7 @@ const Navbar = async ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
   return (
     <div className="flex flex-row justify-between w-full">
-      <Link href="/" className="flex items-center">
+      <Link href="/dashboard" className="flex items-center">
         <div className="relative mr-2">
           <BookOpen className="w-8 h-8 text-blue-600" />
         </div>
@@ -36,6 +36,14 @@ const Navbar = async ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             </Button>
           </div>
         )}
+        <Button
+              color="black"
+              variant={"outline"}
+              className=" text-sm hover:bg-gray-200"
+              onClick={() => router.push("/quiz")}
+            >
+          Take a Quick Quiz
+        </Button>
       </div>
     </div>
   );

@@ -98,7 +98,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="px-4 md:px-30 lg:px-48">
+    <div className="px-4 md:px-30 lg:px-48 mt-8">
       <div className="mb-8 space-y-4 text-center">
         <h2 className="text-2xl md:text-5xl font-bold text-blue-600">धनशक्ति</h2>
         <p className="text-muted-foreground font-light text-sm md:text-lg">
