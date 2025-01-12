@@ -4,7 +4,6 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
-import { z } from "zod";
 import { Empty } from "@/components/ui/empty";
 import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -14,7 +13,6 @@ import { cn } from "@/lib/utils";
 import { formSchema } from "../conversation/constants";
 
 export default function HomePage() {
-  const router = useRouter();
   const [messages, setMessages] = useState<{ role: string; content: any }[]>([]);
   const [transcript, setTranscript] = useState("");
   const [isListening, setIsListening] = useState(false);
@@ -87,15 +85,17 @@ export default function HomePage() {
         { role: "bot", content: response.data },
       ]);
 
-      form.reset();
+      setTranscript("")
     } catch (error) {
       toast.error("Something went wrong.");
     }
   };
 
-  useEffect(() => {
-    console.log(messages)
-   }, [messages, setMessages]);
+  const playText = (text: string) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "hi-IN";
+    window.speechSynthesis.speak(utterance);
+  };
 
   return (
     <div className="px-4 md:px-30 lg:px-48">
@@ -111,7 +111,7 @@ export default function HomePage() {
         className="rounded-lg border w-full p-4 px-3 py-2 md:px-6 bg-white grid grid-cols-12 gap-2"
       >
         <div className="col-span-12 lg:col-span-9">
-          <p className="text-gray-700">{transcript || "No speech detected yet..."}</p>
+          <p className="text-gray-700 mt-2">{transcript || "No speech detected yet..."}</p>
         </div>
         <div className="flex space-x-2 col-span-12 lg:col-span-3">
           <button
@@ -129,6 +129,8 @@ export default function HomePage() {
             disabled={isListening || !transcript}
             className={`px-4 py-2 rounded-md font-medium ${
               isListening ? "bg-gray-400" : "bg-green-600 text-white"
+            } ${
+              !transcript && "cursor-not-allowed bg-gray-400"
             }`}
             onClick={onSubmit}
           >
@@ -159,6 +161,14 @@ export default function HomePage() {
             >
               {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
               <p className="mt-1 whitespace-pre-line">{message.content}</p>
+              {message.role === "bot" && (
+                  <button
+                    onClick={() => playText(message.content)}
+                    className="mt-2 px-4 py-1 rounded-md bg-blue-500 text-white"
+                  >
+                    Play
+                  </button>
+                )}
             </div>
           ))}
         </div>

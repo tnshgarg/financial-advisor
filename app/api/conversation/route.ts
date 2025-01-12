@@ -12,7 +12,7 @@ export const generateContent = async (text: string) => {
       contents: [
         {
           parts: [
-            { text }
+            { text: `Reply in hindi, ${text}` }
           ]
         }
       ]

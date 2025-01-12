@@ -31,10 +31,10 @@ export const LandingContent = () => {
   return (
     <div>
       <div className="px-10 pb-20 bg-[#fffdf9]">
-        <h2 className="text-center text-3xl font-bold text-black mb-10">
+        {/* <h2 className="text-center text-3xl font-bold text-black mb-10">
           Features
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        </h2> */}
+        {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {testimonials.map((item) => (
             <Card
               key={item.description}
@@ -59,9 +59,9 @@ export const LandingContent = () => {
               </CardHeader>
             </Card>
           ))}
-        </div>
+        </div> */}
       </div>
-      <div className="px-10 pb-20 pt-20 bg-[#fffdf9]">
+      <div className="px-10 pb-20 bg-[#fffdf9]">
         <LandingAccordian />
       </div>
       <div className="-mb-16 text-center mx-auto">
