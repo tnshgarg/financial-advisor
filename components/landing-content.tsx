@@ -1,7 +1,4 @@
 "use client";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
 import { LandingAccordian } from "./landing-faq";
 
 const testimonials = [
