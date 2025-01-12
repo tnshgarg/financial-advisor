@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 const { REACT_APP_GEMINI_API_KEY } = process.env;
 
-export const generateContent = async (text: string) => {
+const generateContent = async (text: string) => {
   console.log("GenerateContent: ", text)
   try {
     const response = await axios.post(`${API_URL}?key=${REACT_APP_GEMINI_API_KEY}`, {
