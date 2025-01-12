@@ -11,7 +11,7 @@ module.exports = {
     sans: ["ui-sans-serif", "system-ui"],
     serif: ["ui-serif", "Georgia"],
     mono: ["ui-monospace", "SFMono-Regular"],
-    display: ["Degular"],
+    display: ["DM Sans", "sans-serif"],
   },
   theme: {
     container: {

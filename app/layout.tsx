@@ -10,35 +10,6 @@ import Head from "next/head";
 import "./globals.css";
 
 const font = DM_Sans({ weight: "500", subsets: ["latin"] });
-const degular = localFont({
-  src: [
-    {
-      path: "../public/fonts/Degular-Black.woff",
-      weight: "900",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/Degular-Bold.woff",
-      weight: "700",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/Degular-Light.woff",
-      weight: "200",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/Degular-Regular.woff",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/Degular-SemiBold.woff",
-      weight: "600",
-      style: "normal",
-    },
-  ],
-});
 
 export const metadata: Metadata = {
   title: "Rural FinanceAI",
@@ -56,7 +27,7 @@ export default async function RootLayout({
         <Head>
           <link rel="shortcut icon" href="/favicon.ico" />
         </Head>
-        <body className={degular.className}>
+        <body className={font.className}>
           <ToasterProvider />
           <ModalProvider />
           {children}
