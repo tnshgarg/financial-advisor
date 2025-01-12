@@ -41,8 +41,8 @@ const degular = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Draaft",
-  description: "AI Content Creator",
+  title: "Rural FinanceAI",
+  description: "AI Finance Coach",
 };
 
 export default async function RootLayout({

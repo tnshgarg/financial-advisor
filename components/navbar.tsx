@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
@@ -14,9 +13,6 @@ const Navbar = async ({ isLoggedIn }: { isLoggedIn: boolean }) => {
         <div className="relative mr-2">
           <BookOpen className="w-8 h-8 text-blue-600" />
         </div>
-        <h2 className={cn("text-2xl font-bold text-black", font.className)}>
-          Rural FinanceAI
-        </h2>
       </Link>
       <div className="flex w-full justify-end">
         {isLoggedIn ? (

@@ -21,23 +21,23 @@ const FaqHeader = ({
 
 const faqData = [
   {
-    question: "What type of content can be generated through Draaft?",
+    question: "In which languages is the platform available?",
     answer:
-      "With Draaft, you can generate multiple types of content including Youtube Shorts Scripts, Tweets, Linkedin Posts, Youtube Community Posts, Wordpress Blog Posts, Email Newsletter, Youtube Video Titles, Description and Video Tags",
+      "The platform supports multiple local Indian languages and dialects, ensuring that users can access information and communicate in their preferred language, making it easy to understand financial concepts.",
   },
   {
-    question: "Can I send Newsletters directly from Draaft",
+    question: "Is the advice provided by the platform fully automated?",
     answer:
-      "No, While draaft can help you generate newsletters, it does not provide you with functionality to send out newsletters",
+      "No, the platform follows a hybrid model. While AI offers personalized recommendations, human financial advisors are available for complex decisions such as major loan approvals or long-term investments. This combination ensures accuracy and trust.",
   },
   {
-    question: "Can I Cancel My Subscription?",
+    question: "How is my data secured on this platform?",
     answer:
-      "Go To Settings Page, and Click on Manage Subscriptions to cancel the subscription using Stripe",
+      "The platform prioritizes data security and privacy. Community ambassadors—trusted members of rural areas—help educate users about the platform’s secure practices, alleviating concerns and building confidence in its use.",
   },
   {
-    question: "How can i contact support?",
-    answer: "Please contact us at support@draaft.ai",
+    question: "Can I trust the financial advice provided by the platform?",
+    answer: "Yes, the platform uses advanced AI and insights from local influencers, village leaders, and human financial advisors to deliver culturally relevant, personalized, and trustworthy advice suited to your financial needs.",
   },
 ];
 

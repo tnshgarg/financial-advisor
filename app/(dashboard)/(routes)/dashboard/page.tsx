@@ -1,202 +1,76 @@
-"use client";
-
-import { BotAvatar } from "@/components/bot-avatar";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { Empty } from "@/components/ui/empty";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { UserAvatar } from "@/components/user-avatar";
-import { useProModal } from "@/hooks/use-pro-modal";
-import { cn } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
+"use client"
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Copy,
-  Edit,
-  Loader,
-  Save,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { ChatCompletionRequestMessage } from "openai";
-import { useEffect, useState } from "react";
-
-declare global {
-  interface Window {
-    SpeechRecognition: any;
-    webkitSpeechRecognition: any;
-  }
-}
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { z } from "zod";
+import { Empty } from "@/components/ui/empty";
+import { Loader } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { UserAvatar } from "@/components/user-avatar";
+import { BotAvatar } from "@/components/bot-avatar";
+import { cn } from "@/lib/utils";
 import { formSchema } from "../conversation/constants";
-
-export function SpeechToText() {
-  const [transcript, setTranscript] = useState('');
-  const [isListening, setIsListening] = useState(false);
-  const [error, setError] = useState('');
-
-  const startListening = () => {
-    if (!('webkitSpeechRecognition' in window)) {
-      setError('Your browser does not support Speech Recognition.');
-      return;
-    }
-
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-
-    recognition.lang = 'hi-IN'; // Set the language (e.g., 'ta-IN' for Tamil, 'kn-IN' for Kannada)
-    recognition.interimResults = true; // To show intermediate results
-
-    recognition.onstart = () => {
-      setIsListening(true);
-      setError('');
-    };
-
-    recognition.onerror = (event: { error: any; }) => {
-      setIsListening(false);
-      setError(`Error: ${event.error}`);
-    };
-
-    recognition.onresult = (event: { results: Iterable<unknown> | ArrayLike<unknown>; }) => {
-      const result = Array.from(event.results)
-        .map((result: any) => result[0].transcript)
-        .join('');
-      setTranscript(result);
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-
-    recognition.start();
-  };
-
-  const stopListening = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.stop();
-    setIsListening(false);
-  };
-
-  return (
-    <div className="p-4 bg-white shadow-md rounded-lg max-w-md mx-auto">
-      <h1 className="text-xl font-bold text-gray-900 mb-4">Speech to Text</h1>
-
-      <div className="mb-4">
-        <p className="text-sm text-gray-600">
-          Click the button below and speak in an Indian language (e.g., Hindi, Tamil, Kannada).
-        </p>
-      </div>
-
-      <div className="flex space-x-2">
-        <button
-          onClick={startListening}
-          disabled={isListening}
-          className={`px-4 py-2 rounded-md font-medium ${isListening ? 'bg-gray-400' : 'bg-blue-600 text-white'}`}
-        >
-          {isListening ? 'Listening...' : 'Start Listening'}
-        </button>
-        <button
-          onClick={stopListening}
-          disabled={!isListening}
-          className={`px-4 py-2 rounded-md font-medium ${!isListening ? 'bg-gray-400' : 'bg-red-600 text-white'}`}
-        >
-          Stop
-        </button>
-      </div>
-
-      {error && <p className="text-red-600 mt-4">{error}</p>}
-
-      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-        <h2 className="font-semibold text-gray-900">Transcript</h2>
-        <p className="text-gray-700">{transcript || 'No speech detected yet...'}</p>
-      </div>
-    </div>
-  );
-}
 
 export default function HomePage() {
   const router = useRouter();
-  const proModal = useProModal();
-  const [contentEditable, setContentEditable] = useState<boolean>(false);
-  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
-  const [transcript, setTranscript] = useState('');
+  const [messages, setMessages] = useState<{ role: string; content: any }[]>([]);
+  const [transcript, setTranscript] = useState("");
   const [isListening, setIsListening] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
-  const startListening = () => {
-    if (!('webkitSpeechRecognition' in window)) {
-      setError('Your browser does not support Speech Recognition.');
-      return;
-    }
-
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-
-    recognition.lang = 'hi-IN'; // Set the language (e.g., 'ta-IN' for Tamil, 'kn-IN' for Kannada)
-    recognition.interimResults = true; // To show intermediate results
-
-    recognition.onstart = () => {
-      setIsListening(true);
-      setError('');
-    };
-
-    recognition.onerror = (event: { error: any; }) => {
-      setIsListening(false);
-      setError(`Error: ${event.error}`);
-    };
-
-    recognition.onresult = (event: { results: Iterable<unknown> | ArrayLike<unknown>; }) => {
-      const result = Array.from(event.results)
-        .map((result: any) => result[0].transcript)
-        .join('');
-      setTranscript(result);
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-
-    recognition.start();
-  };
-
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       prompt: "",
     },
   });
 
-  const [isLoggedInModalVisible, setIsLoggedInModalVisible] =
-    useState<boolean>(false);
-
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    const response = await axios.get("/api/auth-checker");
-    // console.log("Response: ", response);
-    if (response.data.status == 401) setIsLoggedInModalVisible(true);
-  };
-
   const isLoading = form.formState.isSubmitting;
+
+  const startListening = () => {
+    if (!("webkitSpeechRecognition" in window)) {
+      setError("Your browser does not support Speech Recognition.");
+      return;
+    }
+
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "hi-IN";
+    recognition.interimResults = true;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+      setError("");
+    };
+
+    recognition.onerror = (event: { error: any; }) => {
+      setIsListening(false);
+      setError(`Error: ${event.error}`);
+    };
+
+    recognition.onresult = (event: { results: Iterable<unknown> | ArrayLike<unknown>; }) => {
+      const result = Array.from(event.results)
+        .map((res: any) => res[0].transcript)
+        .join("");
+      setTranscript(result);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
 
   const onSubmit = async () => {
     try {
-      if (transcript.length == 0) return;
+      if (transcript.length === 0) return;
 
-      const userMessage: ChatCompletionRequestMessage = {
+      const userMessage = {
         role: "user",
         content: transcript,
       };
@@ -204,77 +78,64 @@ export default function HomePage() {
       const response = await axios.post("/api/conversation", {
         data: transcript,
       });
-      // console.log("RESPO: ", response);
 
-      if (response.status == 401) setIsLoggedInModalVisible(true);
-      setMessages((current) => [...current, userMessage, response.data]);
+      console.log("Response: ", response.data);
+
+      setMessages((prev) => [
+        ...prev,
+        userMessage,
+        { role: "bot", content: response.data },
+      ]);
 
       form.reset();
-    } catch (error: any) {
-      if (error?.response?.status === 403) {
-        proModal.onOpen();
-      } else {
-        toast.error("Something went wrong.");
-      }
-    } finally {
-      router.refresh();
+    } catch (error) {
+      toast.error("Something went wrong.");
     }
   };
 
+  useEffect(() => {
+    console.log(messages)
+   }, [messages, setMessages]);
+
   return (
     <div className="px-4 md:px-30 lg:px-48">
-      <div className="mb-8 space-y-4">
-        <h2 className="text-2xl md:text-5xl font-bold text-center">
-          {"Let's Create Something Views-Worthy!"}
-        </h2>
-        <p className="text-muted-foreground font-light text-sm md:text-lg text-center px-[120px]">
-          {
-            "You can generate your Social Media Posts, Youtube Video Scripts, Video Titles, Video Description, Video Tags, Wordpress Post, Email Newsletter all in one place"
-          }
+      <div className="mb-8 space-y-4 text-center">
+        <h2 className="text-2xl md:text-5xl font-bold text-blue-600">धनशक्ति</h2>
+        <p className="text-muted-foreground font-light text-sm md:text-lg">
+        नीचे दिए गए बटन पर क्लिक करें और भारतीय भाषा (जैसे हिंदी, तमिल, कन्नड़) में बोलें।
         </p>
       </div>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="rounded-lg border w-full p-4 px-3 py-2 md:px-6 focus-within:shadow-sm grid grid-cols-12 gap-2 bg-white"
-        >
-          <FormItem className="col-span-12 lg:col-span-9 flex flex-row align-middle">
-            {/* <FormField
-              name="prompt"
-              render={({ field }) => (
-                <FormItem className="col-span-12 lg:col-span-10 flex flex-row align-middle flex-1">
-                  <FormControl className="p-0">
-                    <Input
-                      className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent ml-4 mt-2"
-                      disabled={isLoading}
-                      placeholder={"Enter your query"}
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            /> */}
-            <p className="text-gray-700 mt-2">{transcript || 'No speech detected yet...'}</p>
-          </FormItem>
-          <div className="flex space-x-2 w-auto">
-            <button
-              onClick={startListening}
-              disabled={isListening}
-              className={`px-4 py-2 rounded-md font-medium whitespace-nowrap ${isListening ? 'bg-gray-400' : 'bg-blue-600 text-white'}`}
-            >
-              {isListening ? 'Listening...' : 'Start Listening'}
-            </button>
-            <button
-              onClick={onSubmit}
-              disabled={isListening}
-              className={`px-4 py-2 rounded-md font-medium whitespace-nowrap ${isListening ? 'bg-gray-400' : 'bg-red-600 text-white'}`}
-            >
-              Generate
-            </button>
-          </div>
 
-        </form>
-      </Form>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="rounded-lg border w-full p-4 px-3 py-2 md:px-6 bg-white grid grid-cols-12 gap-2"
+      >
+        <div className="col-span-12 lg:col-span-9">
+          <p className="text-gray-700">{transcript || "No speech detected yet..."}</p>
+        </div>
+        <div className="flex space-x-2 col-span-12 lg:col-span-3">
+          <button
+            type="button"
+            onClick={startListening}
+            disabled={isListening}
+            className={`px-4 py-2 rounded-md font-medium ${
+              isListening ? "bg-gray-400" : "bg-blue-600 text-white"
+            }`}
+          >
+            {isListening ? "Listening..." : "Start Listening"}
+          </button>
+          <button
+            type="submit"
+            disabled={isListening || !transcript}
+            className={`px-4 py-2 rounded-md font-medium ${
+              isListening ? "bg-gray-400" : "bg-green-600 text-white"
+            }`}
+            onClick={onSubmit}
+          >
+            Generate
+          </button>
+        </div>
+      </form>
 
       <div className="space-y-4 mt-4">
         {isLoading && (
@@ -282,62 +143,26 @@ export default function HomePage() {
             <Loader />
           </div>
         )}
-        {messages.length === 0 && !isLoading && (
-          <Empty label="No Content Generated" />
-        )}
+
+        {messages.length === 0 && !isLoading && <Empty label="No Content Generated" />}
+
         <div className="flex flex-col-reverse gap-y-4">
-          {messages.map((message) => (
+          {messages.map((message, index) => (
             <div
-              key={message.content}
+              key={index}
               className={cn(
                 "p-8 w-full flex items-start gap-x-8 rounded-lg",
                 message.role === "user"
-                  ? "bg-white border border-black/10 p-3"
+                  ? "bg-white border border-black/10"
                   : "bg-muted"
               )}
             >
               {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-              {message.role === "user" ? (
-                <p className="mt-1">{message.content!}</p>
-              ) : (
-                <div
-                  contentEditable={contentEditable}
-                  style={{ whiteSpace: "pre-line" }}
-                  className={cn(contentEditable ? "bg-white" : "")}
-                >
-                  {message.content!}
-                </div>
-              )}
+              <p className="mt-1 whitespace-pre-line">{message.content}</p>
             </div>
           ))}
         </div>
       </div>
-      <AlertDialog open={isLoggedInModalVisible}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              You need to Sign Up before using Draaft
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              This is done to prevent unauthorized access. Hope you understand!
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction
-              onClick={() => router.push("/sign-up")}
-              className="bg-black text-white text-md hover:bg-gray-700"
-            >
-              Sign Up
-            </AlertDialogAction>
-            <AlertDialogAction
-              onClick={() => router.push("/sign-in")}
-              className="bg-white text-black text-md hover:bg-gray-100"
-            >
-              Sign In
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

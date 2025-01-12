@@ -6,6 +6,7 @@ const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-
 const { REACT_APP_GEMINI_API_KEY } = process.env;
 
 export const generateContent = async (text: string) => {
+  console.log("GenerateContent: ", text)
   try {
     const response = await axios.post(`${API_URL}?key=${REACT_APP_GEMINI_API_KEY}`, {
       contents: [
@@ -20,10 +21,10 @@ export const generateContent = async (text: string) => {
         'Content-Type': 'application/json'
       }
     });
-    // console.log('Response:', response.data);
-    return response.data;
+    console.log('Response:', response.data.candidates[0].content.parts[0].text);
+    return response.data.candidates[0].content.parts[0].text;
   } catch (error: any) {
-    console.error('Error:', error.response ? error.response.data : error.message);
+    // console.error('Error:', error.response ? error.response.data : error.message);
     throw error;
   }
 };
@@ -33,17 +34,17 @@ export async function POST(req: Request) {
     const { userId } = auth();
     const {data} = await req.json();
 
-    console.log("BAckend:", data.data);
+    // console.log("BAckend:", data.data);
 
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const response = generateContent(data)
+    const response = await generateContent(data)
 
     return NextResponse.json(response);
   } catch (error) {
-    console.log("[CONVERSATION_ERROR]", error);
+    // console.log("[CONVERSATION_ERROR]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }

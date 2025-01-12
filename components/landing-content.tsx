@@ -3,7 +3,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { LandingAccordian } from "./landing-faq";
-import LandingPricingPage from "./landing-pricing";
 
 const testimonials = [
   {
@@ -63,17 +62,14 @@ export const LandingContent = () => {
         </div>
       </div>
       <div className="px-10 pb-20 pt-20 bg-[#fffdf9]">
-        <LandingPricingPage />
-      </div>
-      <div className="px-10 pb-20 pt-20 bg-[#fffdf9]">
         <LandingAccordian />
       </div>
-      <div className="mb-10 text-center mx-auto">
+      <div className="-mb-16 text-center mx-auto">
         <a href="/terms-and-conditions" className="mr-4">
           Terms and Conditions
         </a>
         <a className="/privacy-policy">Privacy Policy</a>
-        <p>© Draaft LLC</p>
+        <p className="mb-10">© Rural FinanceAI LLC</p>
       </div>
     </div>
   );

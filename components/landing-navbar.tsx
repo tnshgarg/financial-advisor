@@ -19,7 +19,7 @@ export const LandingNavbar = () => {
         <div className="relative mr-2">
           <BookOpen className="w-8 h-8 text-blue-600" />
         </div>
-        <h1 className={cn("text-2xl font-bold text-black", font.className)}>
+        <h1 className={cn("text-xl font-bold text-black", font.className)}>
           Rural FinanceAI
         </h1>
       </Link>
