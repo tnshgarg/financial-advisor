@@ -4,29 +4,20 @@ Financial Advisor is a Next.js-powered web application that helps users make inf
 
 🚀 Features
 
-AI-Powered Financial Advice – Get personalized financial guidance using the Gemini API.
-
-Hindi Language Support – The entire platform operates in Hindi for better accessibility.
-
-Interactive Quiz – Assess your financial literacy with engaging quizzes.
-
-Clerk Authentication – Secure user authentication and account management.
-
-Speech-to-Text – Users can interact using voice commands for seamless experience.
+- AI-Powered Financial Advice – Get personalized financial guidance using the Gemini API.
+- Hindi Language Support – The entire platform operates in Hindi for better accessibility.
+- Interactive Quiz – Assess your financial literacy with engaging quizzes.
+- Clerk Authentication – Secure user authentication and account management.
+- Speech-to-Text – Users can interact using voice commands for seamless experience.
 
 🛠️ Tech Stack
 
-Frontend: Next.js (React-based framework)
-
-AI Integration: Google Gemini API
-
-Authentication: Clerk
-
-Speech-to-Text: Browser Web Speech API / Google Speech-to-Text API
-
-State Management: React Context / Zustand
-
-Styling: Tailwind CSS
+- Frontend: Next.js (React-based framework)
+- AI Integration: Google Gemini API
+- Authentication: Clerk
+- Speech-to-Text: Browser Web Speech API / Google Speech-to-Text API
+- State Management: React Context / Zustand
+- Styling: Tailwind CSS
 
 📂 Project Setup
 
